@@ -1,0 +1,49 @@
+<div class="component-container d-flex justify-content-center align-items-center">
+  <mat-card class="example-card shadow mb-5 bg-body-tertiary rounded">
+    <mat-card-header class="d-flex justify-content-center">
+      <mat-card-title>WELCOME BACK</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="m-5">
+
+      <form [formGroup]="authForm" (ngSubmit)="onSubmitLogin()" class="example-form">
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Email</mat-label>
+          <input matInput
+                 formControlName="username"
+                 placeholder="Ex. admin/admin@gmail.com"
+                 [errorStateMatcher]="matcher"
+          >
+          <mat-error *ngIf="matcher.isRequired('username')">
+            Username is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Password</mat-label>
+          <input matInput
+                 formControlName="password"
+                 placeholder="Ex. Password123@"
+                 [errorStateMatcher]="matcher"
+          >
+          <mat-error *ngIf="matcher.isRequired('password')">
+            Password is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-divider></mat-divider>
+        <mat-card-actions class="d-flex justify-content-between">
+          <button mat-raised-button color="primary" type="submit">LOGIN</button>
+          <mat-card-subtitle><a routerLink="./">Creating an account?</a></mat-card-subtitle>
+        </mat-card-actions>
+
+      </form>
+
+    </mat-card-content>
+
+    <mat-card-footer *ngIf="isLoading">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </mat-card-footer>
+
+  </mat-card>
+
+</div>

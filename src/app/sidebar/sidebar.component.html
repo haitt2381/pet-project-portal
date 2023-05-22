@@ -1,0 +1,17 @@
+<mat-drawer-container class="container-sidenav">
+  <mat-drawer #drawer class="sidenav" mode="over">
+    <mat-nav-list>
+      <a
+        *ngIf="isAuthenticated"
+        mat-list-item
+        routerLink="/user"
+        routerLinkActive="active">
+        <span matListItemTitle>User management</span>
+      </a>
+    </mat-nav-list>
+  </mat-drawer>
+  <div class="sidenav-content">
+    <ng-content></ng-content>
+  </div>
+
+</mat-drawer-container>

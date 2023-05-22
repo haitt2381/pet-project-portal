@@ -1,0 +1,42 @@
+<mat-toolbar color="primary" class="header-container">
+  <button mat-icon-button (click)="onToggleSidebar()">
+    <mat-icon *ngIf="!isOpenSidebar">
+      <fa-icon [icon]="faBars"></fa-icon>
+    </mat-icon>
+    <mat-icon *ngIf="isOpenSidebar">
+      <fa-icon [icon]="faXmark"></fa-icon>
+    </mat-icon>
+  </button>
+  <a routerLink="/">PET PROJECT</a>
+  <span class="spacer"></span>
+  <div
+    mat-raised-button
+    matTooltip="Login"
+    matTooltipPosition="left"
+  >
+    <a mat-icon-button
+       routerLink="/auth"
+       routerLinkActive="active"
+       *ngIf="!isAuthenticated"
+    >
+      <mat-icon>
+        <fa-icon [icon]="faRightToBracket"></fa-icon>
+      </mat-icon>
+    </a>
+  </div>
+
+  <div
+    mat-raised-button
+    matTooltip="Logout"
+    matTooltipPosition="left"
+  >
+  <a mat-icon-button
+     (click)="onLogout()"
+     *ngIf="isAuthenticated"
+  >
+    <mat-icon>
+      <fa-icon [icon]="faRightFromBracket"></fa-icon>
+    </mat-icon>
+  </a>
+  </div>
+</mat-toolbar>

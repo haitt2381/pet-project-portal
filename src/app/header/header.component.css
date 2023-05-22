@@ -1,0 +1,13 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.header-container {
+  height: var(--header-height);
+}
+
+
+a, a:hover {
+  color: #fff;
+  text-decoration: none;
+}
