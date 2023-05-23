@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ResponseInfo} from "../model/common/ResponseInfo.model";
+import {DEFAULT_ERROR} from "../constant/alert.constant";
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +11,16 @@ export class AlertService {
   constructor(private _snackBar: MatSnackBar) {
   }
 
-  showErrors(responseInfo: ResponseInfo) {
+  handleErrors(resData) {
+    if (!resData.error || !resData.error.responseInfo) {
+      this.error(DEFAULT_ERROR);
+    }
+
+    const responseInfo: ResponseInfo = resData.error.responseInfo;
     responseInfo.errors.forEach(error => {
       this.error(error.message);
     });
-  }
+  };
 
   success(message: string) {
     this._snackBar.open(message, 'OK', {

@@ -35,7 +35,7 @@ export class AuthComponent implements OnInit {
       this.isLoading = authState.loading;
       this.responseInfo = authState.responseInfo;
       if(this.responseInfo) {
-        this.alertService.showErrors(this.responseInfo)
+        this.alertService.handleErrors(this.responseInfo)
       }
     })
 

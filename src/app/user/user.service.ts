@@ -3,7 +3,7 @@ import * as AppConstant from "../app.constant";
 import {HttpClient} from "@angular/common/http";
 import {User} from "../share/model/user/user.model";
 import {AlertService} from "../share/services/alert.service";
-import {CREATE_USER_SUCCESSFULLY} from "../share/constrant/alert.constrant";
+import {CREATE_USER_SUCCESSFULLY} from "../share/constant/alert.constant";
 import {Router} from "@angular/router";
 import {ResponseInfo} from "../share/model/common/ResponseInfo.model";
 import {GetUsersRequest} from "../share/model/user/GetUsersRequest.model";
@@ -22,11 +22,6 @@ export class UserService {
   ) {
   }
 
-  handleError(resData) {
-    const responseInfo: ResponseInfo = resData.error.responseInfo;
-    this.alertService.showErrors(responseInfo);
-  };
-
   handleGetUsers(resData) {
     console.log(resData)
   }
@@ -42,7 +37,7 @@ export class UserService {
   createUser(newUser: User) {
     this.http.post(this.userUrl + 'create', newUser).subscribe({
       next: this.handleCreateUser.bind(this),
-      error: this.handleError.bind(this)
+      error: this.alertService.handleErrors.bind(this)
     })
   }
 
@@ -51,9 +46,6 @@ export class UserService {
       let requestInfo: RequestInfo = new RequestInfo(AppConstant.DEFAULT_PAGE, AppConstant.DEFAULT_SIZE, []);
       request = new GetUsersRequest("", requestInfo);
     }
-    this.http.post(this.userUrl + 'list', request).subscribe({
-      next: this.handleGetUsers.bind(this),
-      error: this.handleError.bind(this)
-    });
+    return this.http.post(this.userUrl + 'list', request);
   }
 }
