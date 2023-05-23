@@ -23,17 +23,18 @@ export class AuthService {
   }
 
   setLogoutTimer(refreshExpirationDuration: number, tokenExpirationDuration: number, refreshToken: string) {
+
     this.refreshTokenExpirationTimer = setTimeout(() => {
       this.store.dispatch(logout())
     }, refreshExpirationDuration);
-    clearTimeout(this.tokenExpirationTimer)
+    // clearTimeout(this.tokenExpirationTimer)
     this.tokenExpirationTimer = this.setGetAccessTokenTimer(refreshToken, tokenExpirationDuration)
   }
 
   setGetAccessTokenTimer(refreshTokenString: string, expirationDuration: number) {
+
     return  setTimeout(() => {
       // call get access token
-      console.log("call refresh token")
       this.store.dispatch(refreshToken({refreshToken: refreshTokenString}));
       this.tokenExpirationTimer = this.setGetAccessTokenTimer(refreshTokenString, expirationDuration);
     }, expirationDuration)

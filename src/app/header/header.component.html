@@ -1,10 +1,12 @@
 <mat-toolbar color="primary" class="header-container">
-  <button mat-icon-button (click)="onToggleSidebar()">
+  <button mat-icon-button (click)="onToggleSidebar()"
+          *ngIf="isAuthenticated"
+  >
     <mat-icon *ngIf="!isOpenSidebar">
-      <fa-icon [icon]="faBars"></fa-icon>
+      <i class="fa-solid fa-bars"></i>
     </mat-icon>
     <mat-icon *ngIf="isOpenSidebar">
-      <fa-icon [icon]="faXmark"></fa-icon>
+      <i class="fa-solid fa-xmark"></i>
     </mat-icon>
   </button>
   <a routerLink="/">PET PROJECT</a>
@@ -19,8 +21,8 @@
        routerLinkActive="active"
        *ngIf="!isAuthenticated"
     >
-      <mat-icon>
-        <fa-icon [icon]="faRightToBracket"></fa-icon>
+      <mat-icon class="icon-centered">
+        <i class="fa-solid fa-right-to-bracket"></i>
       </mat-icon>
     </a>
   </div>
@@ -30,13 +32,13 @@
     matTooltip="Logout"
     matTooltipPosition="left"
   >
-  <a mat-icon-button
-     (click)="onLogout()"
-     *ngIf="isAuthenticated"
-  >
-    <mat-icon>
-      <fa-icon [icon]="faRightFromBracket"></fa-icon>
-    </mat-icon>
-  </a>
+    <a mat-icon-button
+       (click)="onLogout()"
+       *ngIf="isAuthenticated"
+    >
+      <mat-icon class="icon-centered">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </mat-icon>
+    </a>
   </div>
 </mat-toolbar>

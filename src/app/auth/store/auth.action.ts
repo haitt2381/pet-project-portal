@@ -1,5 +1,6 @@
 import {Action, createAction, props} from "@ngrx/store";
 import {Auth, Login} from "../user.model";
+import {ResponseInfo} from "../../share/model/common/ResponseInfo.model";
 
 export const LOGIN_START = '[Auth] Login Start';
 export const AUTHENTICATE_SUCCESS = '[Auth] Login';
@@ -16,7 +17,7 @@ export const loginStart = createAction(LOGIN_START, props<Login>())
 
 export const authenticateSuccess = createAction(AUTHENTICATE_SUCCESS, props<Auth>())
 
-export const authenticateFail = createAction(AUTHENTICATE_FAIL, props<{payload: string}>())
+export const authenticateFail = createAction(AUTHENTICATE_FAIL, props<{responseInfo: ResponseInfo}>())
 
 export const autoLogin = createAction(AUTO_LOGIN)
 

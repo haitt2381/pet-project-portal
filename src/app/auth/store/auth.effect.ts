@@ -23,7 +23,8 @@ const handleAuthentication = (
   userId: string,
   token: string,
   refreshToken: string,
-  refreshExpiresIn: number
+  refreshExpiresIn: number,
+  redirect: boolean
 ) => {
   const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
   const refreshExpirationDate = new Date(new Date().getTime() + refreshExpiresIn * 1000);
@@ -37,37 +38,23 @@ const handleAuthentication = (
       expirationDate: expirationDate,
       refreshToken: refreshToken,
       refreshExpirationDate: refreshExpirationDate,
-      redirect: true,
+      redirect: redirect,
     }
   );
 }
 
 const handleError = (errorRes: any) => {
-  let errorMessage = 'An unknown error occurred!';
-  console.log(errorRes)
-  if (!errorRes.error || !errorRes.error.error) {
-    console.log("aasvsf")
-    return of(fromAuth.authenticateFail({payload: errorMessage}))
-  }
-  switch (errorRes.error.error.message) {
-    case 'EMAIL_EXISTS':
-      errorMessage = 'This email exists already';
-      break;
-    case 'EMAIL_NOT_FOUND':
-      errorMessage = 'This email does not exist.';
-      break;
-    case 'INVALID_PASSWORD':
-      errorMessage = 'This password is not correct.';
-      break;
-  }
-  return of(fromAuth.authenticateFail({payload: errorMessage}));
+  let responseInfo = errorRes.error.responseInfo;
+  return of(fromAuth.authenticateFail({
+    responseInfo: responseInfo
+  }));
 }
 
 @Injectable()
 export class AuthEffects {
   private signUpUrl: string = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyD8ozMP6GFw-NNBaUowKZ5n63FB7lWVfg4';
-  private signInUrl: string = 'http://localhost:8888/auth/login';
-  private refreshTokenUrl: string = 'http://localhost:8888/user/refreshToken/';
+  private signInUrl: string = 'http://localhost:8888/api/auth/login';
+  private refreshTokenUrl: string = 'http://localhost:8888/api/auth/refreshToken/';
 
 
   constructor(
@@ -126,7 +113,6 @@ export class AuthEffects {
                 +resData['expires_in'] * 1000, resData['refresh_token'])
             }),
             map(resData => {
-              console.log(resData)
               return handleAuthentication(
                 +resData['expires_in'],
                 resData.email,
@@ -134,6 +120,7 @@ export class AuthEffects {
                 resData['access_token'],
                 resData['refresh_token'],
                 +resData['refresh_expires_in'],
+                true
               )
             }),
             catchError(errorRes => {
@@ -159,7 +146,6 @@ export class AuthEffects {
     tap(() => {
       this.authService.clearLogoutTime()
       localStorage.removeItem('userData')
-      console.log("remove userData")
       this.router.navigate(['/auth'])
     })
   ), {dispatch: false})
@@ -193,8 +179,7 @@ export class AuthEffects {
           const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
           const refreshExpirationDuration = new Date(userData._refreshTokenExpirationDate).getTime() - new Date().getTime();
 
-          console.log("expirationDuration: ", userData._tokenExpirationDate)
-          this.authService.setLogoutTimer(expirationDuration, refreshExpirationDuration, (loadedUser.refreshToken || ''))
+          this.authService.setLogoutTimer(refreshExpirationDuration, expirationDuration, (loadedUser.refreshToken || ''))
           return fromAuth.authenticateSuccess({
             email: loadedUser.email,
             userId: loadedUser.id,
@@ -227,7 +212,6 @@ export class AuthEffects {
                 +resData['expires_in'] * 1000, resData['refresh_token'])
             }),
             map(resData => {
-              console.log(resData)
               return handleAuthentication(
                 +resData['expires_in'],
                 resData.email,
@@ -235,6 +219,7 @@ export class AuthEffects {
                 resData['access_token'],
                 resData['refresh_token'],
                 +resData['refresh_expires_in'],
+                false
               )
             }),
             catchError(errorRes => {

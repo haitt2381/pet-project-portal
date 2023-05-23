@@ -1,16 +1,22 @@
-<mat-drawer-container class="container-sidenav">
-  <mat-drawer #drawer class="sidenav" mode="over">
-    <mat-nav-list>
-      <a
-        *ngIf="isAuthenticated"
-        mat-list-item
-        routerLink="/user"
-        routerLinkActive="active">
-        <span matListItemTitle>User management</span>
-      </a>
-    </mat-nav-list>
-  </mat-drawer>
-  <div class="sidenav-content">
+<mat-drawer-container
+  [ngClass]="isAuthenticated ? 'container-sidenav' : 'container-sidenav background-login'"
+  class="container-sidenav"
+>
+    <mat-drawer #drawer class="sidenav" mode="side" [opened]="isAuthenticated" >
+
+      <mat-nav-list>
+        <a
+          mat-list-item
+          routerLink="/user"
+          routerLinkActive="active">
+          <span matListItemTitle>User management</span>
+        </a>
+      </mat-nav-list>
+
+    </mat-drawer>
+
+  <app-header class="header"></app-header>
+  <div class="sidenav-content py-5">
     <ng-content></ng-content>
   </div>
 

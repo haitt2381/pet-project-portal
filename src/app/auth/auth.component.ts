@@ -6,6 +6,7 @@ import {AppState} from "../store/app.reducer";
 import {loginStart} from "./store/auth.action";
 import {MyErrorStateMatcher} from "../share/my-error-state-matcher";
 import {AlertService} from "../share/services/alert.service";
+import {ResponseInfo} from "../share/model/common/ResponseInfo.model";
 
 @Component({
   selector: 'app-auth',
@@ -15,7 +16,7 @@ import {AlertService} from "../share/services/alert.service";
 export class AuthComponent implements OnInit {
   isLoginMode = true;
   isLoading = false;
-  error: string | null = null;
+  responseInfo: ResponseInfo = null;
 
   private storeSub: Subscription;
   authForm: FormGroup;
@@ -31,11 +32,10 @@ export class AuthComponent implements OnInit {
 
   ngOnInit() {
     this.storeSub = this.store.select('auth').subscribe(authState => {
-      this.isLoading = authState.loading
-      console.log("loading: ", this.isLoading)
-      this.error = authState.authError
-      if(this.error) {
-        this.alertService.error(this.error)
+      this.isLoading = authState.loading;
+      this.responseInfo = authState.responseInfo;
+      if(this.responseInfo) {
+        this.alertService.showErrors(this.responseInfo)
       }
     })
 
@@ -47,8 +47,6 @@ export class AuthComponent implements OnInit {
     )
 
     this.matcher = new MyErrorStateMatcher(this.authForm);
-
-    console.log(this.error)
   }
 
   onSubmitLogin() {

@@ -14,5 +14,5 @@
 }
 
 .component-container {
-  min-height: var(--sidebar-height);
+  min-height: calc(var(--sidebar-height) - 6rem);
 }

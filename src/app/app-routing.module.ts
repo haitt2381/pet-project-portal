@@ -10,7 +10,8 @@ const routes: Routes = [
   {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
   {path: 'auth', component: AuthComponent},
   {
-    path: 'user', component: UserComponent, canActivate: [AuthGuard], children: [
+    path: 'user', canActivate: [AuthGuard], children: [
+      {path: '', component: UserComponent},
       {path: 'new', component: UserEditComponent},
       // {path: ':id', component: UserEditComponent}
     ]

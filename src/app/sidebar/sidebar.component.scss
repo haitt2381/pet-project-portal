@@ -1,15 +1,18 @@
 .container-sidenav {
   height: var(--sidebar-height);
-  background: rgb(63,81,181);
-  background: linear-gradient(18deg, rgba(63,81,181,1) 0%, rgba(63,181,166,1) 27%, rgba(63,81,181,1) 100%);
 }
 
 .sidenav-content {
   display: flex;
-  height: 100%;
   justify-content: center;
+  height: calc(var(--sidebar-height) - var(--header-height));
 }
 
 .sidenav {
   padding: 20px;
+}
+
+.background-login {
+  background: rgb(63,81,181);
+  background: linear-gradient(18deg, rgba(63,81,181,1) 0%, rgba(63,181,166,1) 27%, rgba(63,81,181,1) 100%);
 }

@@ -1,64 +1,58 @@
-<div class="d-flex justify-content-center">
-  <div
-    class="card col-md-12 p-4 shadow bg-body-tertiary rounded border border-0">
-    <form [formGroup]="userForm" (ngSubmit)="onSubmitUser()">
-      <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="firstname"
-               placeholder="floating"
-               formControlName="firstname"
-        >
-        <label for="firstname">Firstname</label>
-      </div>
+<form [formGroup]="userForm" (ngSubmit)="onSubmitUser()">
+  <div class="card text-center">
+    <div class="card-header d-flex justify-content-between">
+      <b>USER MANAGEMENT</b>
+    </div>
+    <div class="card-body">
 
-      <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="lastname"
-               placeholder="floating"
-               formControlName="lastname"
-        >
-        <label for="lastname">Lastname</label>
-      </div>
+      <mat-form-field class="mb-3 full-width" appearance="outline">
+        <input matInput type="text" formControlName="firstName">
+        <mat-label class="form-label">Firstname</mat-label>
+      </mat-form-field>
 
-      <div class="form-floating mb-3">
-        <input type="email" class="form-control" id="email"
-               placeholder="floating"
-               formControlName="email"
-        >
-        <label for="email">Email</label>
-      </div>
+      <mat-form-field class="mb-3 full-width" appearance="outline">
+        <input matInput type="text" formControlName="lastName">
+        <mat-label>Lastname</mat-label>
+      </mat-form-field>
 
-      <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="phoneNumber"
-               placeholder="floating"
-               formControlName="phoneNumber"
-        >
-        <label for="phoneNumber">Phone Number</label>
-      </div>
+      <mat-form-field class="mb-3 full-width" appearance="outline">
+        <input matInput type="email" formControlName="email">
+        <mat-label>Email</mat-label>
+      </mat-form-field>
 
-      <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="username"
-               placeholder="floating"
-               formControlName="username"
-        >
-        <label for="username">Username</label>
-      </div>
+      <mat-form-field class="mb-3 full-width" appearance="outline">
+        <input matInput type="text" formControlName="phoneNumber">
+        <mat-label>Phone Number</mat-label>
+      </mat-form-field>
 
-      <div class="form-floating mb-3">
-        <input type="password" class="form-control" id="password"
-               placeholder="floating"
-               formControlName="password"
-        >
-        <label for="password">Password</label>
-      </div>
+      <mat-form-field class="mb-3 full-width" appearance="outline">
+        <input matInput type="text" formControlName="username">
+        <mat-label>Username</mat-label>
+      </mat-form-field>
 
-      <button type="submit" class="btn btn-primary"
+      <mat-form-field class="mb-3 full-width" appearance="outline">
+        <input matInput type="password" formControlName="password">
+        <mat-label>Password</mat-label>
+      </mat-form-field>
+
+      <mat-radio-group formControlName="role">
+        <mat-radio-button value="ADMIN">Admin</mat-radio-button>
+        <mat-radio-button value="MODERATOR">Moderator</mat-radio-button>
+        <mat-radio-button value="MEMBER">Member</mat-radio-button>
+      </mat-radio-group>
+
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+      <button type="button" mat-raised-button  color="warn"
+              (click)="onCancelEditUser()"
+      >Cancel
+      </button>
+      <button type="submit"  mat-raised-button  color="primary"
               [disabled]="!userForm.valid"
       >Submit
       </button>
-      <button type="button" class="ms-2 btn btn-danger"
-      (click)="onCancelEditUser()"
-      >Cancel</button>
-
-    </form>
+    </div>
   </div>
-</div>
+</form>
+
 

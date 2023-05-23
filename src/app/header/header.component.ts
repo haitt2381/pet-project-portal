@@ -28,6 +28,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe(user => {
         this.isAuthenticated = !!user
       })
+
+    this.isOpenSidebar = this.sidebarService.drawerSidebar.opened;
   }
 
   ngOnDestroy() {
@@ -42,9 +44,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.sidebarService.drawerSidebar.toggle();
     this.isOpenSidebar = this.sidebarService.drawerSidebar.opened;
   }
-
-  protected readonly faXmark = 'faXmark';
-  protected readonly faBars = 'faBars';
-  protected readonly faRightToBracket = 'faRightToBracket';
-  protected readonly faRightFromBracket = 'faRightFromBracket';
 }

@@ -1,9 +1,13 @@
 <router-outlet></router-outlet>
 
-<!--<button class="btn btn-primary" (click)="onNewUser(undefined)">New User</button>-->
 
-<div class="card text-center mt-5">
-  <div class="card-header "><b>USER MANAGEMENT</b></div>
+<div class="card text-center">
+  <div class="card-header d-flex justify-content-between">
+    <b>USER MANAGEMENT</b>
+    <button type="button" mat-raised-button  color="primary"
+    (click)="onEditUser(undefined)"
+    > Create user </button>
+  </div>
   <div class="card-body table-responsive">
     <table class="table table-striped table-hover table-borderless" aria-label="user">
       <thead>
