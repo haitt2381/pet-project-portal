@@ -1,0 +1,14 @@
+<span class="filter-text dropdown" mdbDropdown [closeOnItemClick]="false">
+  <span mdbDropdownToggle class="btn-rounded">
+    <i class="fa-solid fa-filter fa-xs filter-icon"></i>
+  </span>
+  <ul mdbDropdownMenu class="dropdown-menu filter-menu">
+    <li class="dropdown-item" *ngFor="let data of dataSource, let i = index">
+      <div class="form-check">
+        <input mdbCheckbox class="form-check-input" type="checkbox" [value]="data.valueCheckbox" [id]="'filter'+ i" (checkboxChange)="handleCheckboxChange($event)"/>
+        <label class="form-check-label" [for]="'filter'+i" [innerHTML]="this.sanitizer.bypassSecurityTrustHtml(data.textCheckbox)">
+        </label>
+      </div>
+    </li>
+  </ul>
+</span>

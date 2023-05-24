@@ -9,6 +9,7 @@ import {ResponseInfo} from "../share/model/common/ResponseInfo.model";
 import {GetUsersRequest} from "../share/model/user/GetUsersRequest.model";
 import {isNullOrUndefined} from "../share/Utils";
 import {RequestInfo} from "../share/model/common/RequestInfo.model";
+import {Title} from "@angular/platform-browser";
 
 @Injectable({providedIn: 'root'})
 export class UserService {
@@ -19,7 +20,9 @@ export class UserService {
     private http: HttpClient,
     private alertService: AlertService,
     private router: Router,
+    private titleService: Title,
   ) {
+    titleService.setTitle("User management")
   }
 
   handleGetUsers(resData) {
@@ -43,7 +46,7 @@ export class UserService {
 
   getUsers(request?: GetUsersRequest) {
     if (isNullOrUndefined(request)) {
-      let requestInfo: RequestInfo = new RequestInfo(AppConstant.DEFAULT_PAGE, AppConstant.DEFAULT_SIZE, []);
+      let requestInfo: RequestInfo = new RequestInfo(null, null, null);
       request = new GetUsersRequest("", requestInfo);
     }
     return this.http.post(this.userUrl + 'list', request);

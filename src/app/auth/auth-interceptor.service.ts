@@ -1,13 +1,8 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpParams, HttpHeaders
-} from '@angular/common/http';
-import {take, exhaustMap, map} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {exhaustMap, map, take} from 'rxjs/operators';
 
-import { AuthService } from './auth.service';
+import {AuthService} from './auth.service';
 import {Store} from "@ngrx/store";
 import * as fromApp from "../store/app.reducer";
 
@@ -25,7 +20,7 @@ export class AuthInterceptorService implements HttpInterceptor {
         return authState.auth
       }),
       exhaustMap(auth => {
-        if (!auth) {
+        if (!auth || !auth.token) {
           return next.handle(req);
         }
         const modifiedReq = req.clone({

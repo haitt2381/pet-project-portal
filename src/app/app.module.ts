@@ -57,6 +57,10 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatRadioModule} from "@angular/material/radio";
 import {AuthInterceptorService} from "./auth/auth-interceptor.service";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { NgMatTableQueryReflectorDirective } from './share/directives/ng-mat-table-query-reflector.directive';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatSelectModule} from "@angular/material/select";
+import { CustomFilterComponent } from './share/UI/custom-filter/custom-filter.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +72,8 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
     UserEditComponent,
     SidebarComponent,
     DashboardComponent,
+    NgMatTableQueryReflectorDirective,
+    CustomFilterComponent,
   ],
   imports: [
     BrowserModule,
@@ -115,7 +121,9 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
     MatRippleModule,
     MatDialogModule,
     MatRadioModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatCheckboxModule,
+    MatSelectModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}

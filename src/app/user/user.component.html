@@ -1,28 +1,36 @@
 <router-outlet></router-outlet>
 
-
 <div class="card">
   <div class="card-header d-flex justify-content-between">
-    <b>USER MANAGEMENT</b>
     <button type="button" mat-raised-button color="primary"
       (click)="onEditUser(undefined)"
     > Create user
     </button>
   </div>
   <div class="card-body table-responsive">
-    <table class="table align-middle mb-0 bg-white" aria-label="user">
+    <table class="table align-middle mb-0 bg-white" aria-label="user"
+      matSort matSortActive="modifiedAt" matSortDirection="desc"
+      [dataSource]="dataSource" appNgMatTableQueryReflector
+    >
       <thead class="bg-light">
       <tr>
-        <th>Name</th>
-        <th>Title</th>
-        <th>Role</th>
+        <th mat-sort-header="username">Name</th>
+        <th mat-sort-header="email">Contact</th>
+        <th class="filter-container">
+          Role
+          <app-custom-filter
+            [dataSource]="dataSourceRoleFilter"
+            #test
+            (click)="triggerReRender()"
+          ></app-custom-filter>
+        </th>
         <th>Status</th>
-        <th>Modified Date</th>
+        <th mat-sort-header="modifiedAt">Modified Date</th>
         <th></th>
       </tr>
       </thead>
       <tbody>
-      <tr>
+      <tr *ngFor="let user of users">
         <td>
           <div class="d-flex align-items-center">
             <img
@@ -32,76 +40,73 @@
               class="rounded-circle"
             />
             <div class="ms-3">
-              <p class="fw-bold mb-1">admin</p>
-              <p class="text-muted mb-0">John Doe</p>
+              <p class="fw-bold mb-1">{{user.username}}</p>
+              <p class="text-muted mb-0">{{user.firstName.concat(" ", user.lastName)}}</p>
             </div>
           </div>
         </td>
         <td>
-          <p class="fw-normal mb-1">Admin@gmail.com</p>
-          <p class="text-muted mb-0">0913642111</p>
+          <p class="fw-normal mb-1">{{user.email}}</p>
+          <p class="text-muted mb-0">{{user.phoneNumber}}</p>
         </td>
         <td>
-          <span class="badge badge-success rounded-pill d-inline">Admin</span>
+          <span class="badge badge-warning rounded-pill d-inline"
+            *ngIf="user.role.toLowerCase().includes(ADMIN.toLowerCase())"
+          >{{ADMIN}}
+          </span>
+          <span class="badge badge-success rounded-pill d-inline"
+            *ngIf="user.role.toLowerCase().includes(MODERATOR.toLowerCase())"
+          >{{MODERATOR}}
+          </span>
+          <span class="badge badge-primary rounded-pill d-inline"
+            *ngIf="user.role.toLowerCase().includes(MEMBER.toLowerCase())"
+          >{{MEMBER}}
+          </span>
         </td>
         <td>
           <mat-slide-toggle #matSlideToggle
             color="primary"
-            [matTooltip]="matSlideToggle.checked ? 'Deactivate User' : 'Active User'"
             matTooltipPosition="right"
+            [checked]="user.isActive"
+            [matTooltip]="matSlideToggle.checked ? 'Deactivate User' : 'Active User'"
           ></mat-slide-toggle>
         </td>
         <td>
-          10/10/2022
+          {{user.modifiedAt | date:'mediumDate' }}
         </td>
 
-        <td mdbDropdownToggle>
-          <div class="btn-group" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-primary"
-              mdbTooltip="Edit user"
-            >
-              <i class="fa-solid fa-pen-to-square"></i>
-            </button>
-            <button type="button" class="btn btn-danger"
-              mdbTooltip="Delete user"
-            >
-              <i class="fa-solid fa-trash"></i>
-            </button>
+        <td>
+          <div mdbDropdown class="dropdown">
+            <a mdbDropdownToggle>
+              <i class="fa-regular fa-square-caret-down fa-xl"></i>
+            </a>
+            <ul mdbDropdownMenu class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="fa-solid fa-pen-to-square text-success"></i>
+                  &nbsp; Edit
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="fa-solid fa-trash-can text-danger"></i>
+                  &nbsp; Delete
+                </a>
+              </li>
+            </ul>
           </div>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <div class="d-flex align-items-center">
-            <img
-              src="https://mdbootstrap.com/img/new/avatars/6.jpg"
-              class="rounded-circle"
-              alt=""
-              style="width: 45px; height: 45px"
-            />
-            <div class="ms-3">
-              <p class="fw-bold mb-1">Alex Ray</p>
-              <p class="text-muted mb-0">alex.ray@gmail.com</p>
-            </div>
-          </div>
-        </td>
-        <td>
-          <p class="fw-normal mb-1">Consultant</p>
-          <p class="text-muted mb-0">Finance</p>
-        </td>
-        <td>
-        <span class="badge badge-primary rounded-pill d-inline"
-        >Onboarding</span
-        >
-        </td>
-        <td>Junior</td>
-        <td>
-
         </td>
       </tr>
       </tbody>
     </table>
 
   </div>
-  <div class="card-footer">2 days ago</div>
+  <div class="card-footer">
+    <mat-paginator
+      showFirstLastButtons
+      [pageSizeOptions]="[5, 10, 25]"
+      [length]="responseInfo?.total"
+      [pageSize]="responseInfo?.size"
+    ></mat-paginator>
+  </div>
 </div>
