@@ -47,7 +47,6 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {UserComponent} from "./user/user.component";
-import {DropdownDirective} from "./share/dropdown.directive";
 import {AuthComponent} from "./auth/auth.component";
 import {HeaderComponent} from "./header/header.component";
 import {SidebarComponent} from "./sidebar/sidebar.component";
@@ -67,7 +66,6 @@ import { CustomFilterComponent } from './share/UI/custom-filter/custom-filter.co
     AppComponent,
     UserComponent,
     HeaderComponent,
-    DropdownDirective,
     AuthComponent,
     UserEditComponent,
     SidebarComponent,
@@ -123,7 +121,7 @@ import { CustomFilterComponent } from './share/UI/custom-filter/custom-filter.co
     MatRadioModule,
     MatSlideToggleModule,
     MatCheckboxModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}

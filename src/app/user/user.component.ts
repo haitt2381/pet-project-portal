@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {User} from "../share/model/user/user.model";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "./user.service";
@@ -20,7 +12,11 @@ import {catchError, map, merge, of, startWith, Subscription, switchMap} from "rx
 import {GetUsersRequest} from "../share/model/user/GetUsersRequest.model";
 import {RequestInfo, SortInfo} from "../share/model/common/RequestInfo.model";
 import {MatTableDataSource} from "@angular/material/table";
-import {DataSourceFilter} from "../share/UI/custom-filter/custom-filter.component";
+import {CustomFilterComponent, DataSourceFilter} from "../share/UI/custom-filter/custom-filter.component";
+import {HeaderTitleService} from "../header/header-title.service";
+import {MdbCheckboxChange} from "mdb-angular-ui-kit/checkbox";
+import {DomSanitizer} from "@angular/platform-browser";
+import {MdbCheckboxDirective} from "mdb-angular-ui-kit/checkbox/checkbox.directive";
 
 @Component({
   selector: 'app-user',
@@ -35,17 +31,20 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
   users: User[];
   responseInfo: ResponseInfo;
   isLoading: boolean = false;
-  @ViewChild("test") test: any;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild("dropdownFilter", {static: true}) filter: any;
   dataSource: MatTableDataSource<User>;
+  @ViewChild(CustomFilterComponent, {static: true}) customFilter: CustomFilterComponent;
 
   constructor(
     private router: Router,
-    private activatedRoute: ActivatedRoute,
+    private route: ActivatedRoute,
     private userService: UserService,
     private alertService: AlertService,
+    private headerService: HeaderTitleService,
   ) {
+    headerService.setTitle("USER MANAGEMENT")
   }
 
   ngOnInit() {
@@ -55,6 +54,9 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    this.route.queryParams.subscribe(params => {
+      console.log(params)
+    })
     this.loadDataWithQueryParam();
   }
 
@@ -79,7 +81,7 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
   private sub: Subscription;
 
   loadDataWithQueryParam() {
-    this.sub = merge(this.sort.sortChange, this.paginator.page).pipe(
+    return merge(this.sort.sortChange, this.paginator.page, this.customFilter.dropdownFilter.dropdownHidden).pipe(
       startWith({}),
       switchMap(() => {
         this.isLoading = true;
@@ -93,12 +95,14 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
     ).subscribe({
       next: (resData: GetUsersResponse) => {
+        console.log("called observer")
         this.users = resData.data;
         this.responseInfo = resData.responseInfo;
         this.isLoading = false;
       },
       error: this.alertService.handleErrors.bind(this)
     });
+
   }
 
 
@@ -107,7 +111,30 @@ export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  triggerReRender() {
-    console.log("do something", this.test)
+  handleCheckboxChange() {
+    // this.loadDataWithQueryParam();
+    // console.log(this.filter)
+    // this.isLoading = true;
+    // let sortInfo = new SortInfo(this.sort.direction, this.sort.active);
+    // let requestInfo = new RequestInfo(this.paginator.pageIndex, this.paginator.pageSize, sortInfo);
+    // let getUsersRequest = new GetUsersRequest("", requestInfo);
+    // this.userService.getUsers(getUsersRequest).subscribe({
+    //   next: (resData: GetUsersResponse) => {
+    //     this.users = resData.data;
+    //     this.responseInfo = resData.responseInfo;
+    //     this.isLoading = false;
+    //   },
+    //   error: this.alertService.handleErrors.bind(this)
+    // })
+    let queryParams = {
+      role: null,
+    };
+    // if(filter.checked) {
+    //   queryParams = {
+    //     role: event.element.value
+    //   }
+    // }
+
+    this.router.navigate(['/user'], {queryParams: queryParams, queryParamsHandling: 'merge'}).then();
   }
 }

@@ -18,11 +18,7 @@
         <th mat-sort-header="email">Contact</th>
         <th class="filter-container">
           Role
-          <app-custom-filter
-            [dataSource]="dataSourceRoleFilter"
-            #test
-            (click)="triggerReRender()"
-          ></app-custom-filter>
+          <app-custom-filter [dataSource]="dataSourceRoleFilter" [paramName]="'role'"></app-custom-filter>
         </th>
         <th>Status</th>
         <th mat-sort-header="modifiedAt">Modified Date</th>
