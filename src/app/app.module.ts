@@ -61,6 +61,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSelectModule} from "@angular/material/select";
 import { CheckboxFilterComponent } from './share/UI/custom-filter/checkbox-filter.component';
 import {RadioBoxFilterComponent} from "./share/UI/custom-filter/radio-box-filter.component";
+import {EmptyStateComponent} from "./share/UI/empty-state/empty-state.component";
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import {RadioBoxFilterComponent} from "./share/UI/custom-filter/radio-box-filter
     NgMatTableQueryReflectorDirective,
     CheckboxFilterComponent,
     RadioBoxFilterComponent,
+    EmptyStateComponent,
   ],
   imports: [
     BrowserModule,

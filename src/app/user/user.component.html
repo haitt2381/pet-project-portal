@@ -71,6 +71,7 @@
             matTooltipPosition="right"
             [checked]="user.isActive"
             [matTooltip]="matSlideToggle.checked ? 'Deactivate User' : 'Active User'"
+            (change)="onChangeUserStatus(user.email, user.isActive)"
           ></mat-slide-toggle>
         </td>
         <td>
@@ -104,6 +105,8 @@
 
   </div>
   <div class="card-footer">
+    <app-empty-state *ngIf="users === undefined || users.length === 0" ></app-empty-state>
+
     <mat-paginator
       showFirstLastButtons
       [pageSizeOptions]="[5, 10, 25]"

@@ -1,6 +1,6 @@
 import {Action, createAction, props} from "@ngrx/store";
 import {Auth, Login} from "../user.model";
-import {ResponseInfo} from "../../share/model/common/ResponseInfo.model";
+import {ResponseInfo} from "../../share/model/common/response-info.model";
 
 export const LOGIN_START = '[Auth] Login Start';
 export const AUTHENTICATE_SUCCESS = '[Auth] Login';

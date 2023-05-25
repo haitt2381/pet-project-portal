@@ -3,16 +3,15 @@ import * as AppConstant from "../app.constant";
 import {HttpClient} from "@angular/common/http";
 import {User} from "../share/model/user/user.model";
 import {AlertService} from "../share/services/alert.service";
-import {CREATE_USER_SUCCESSFULLY} from "../share/constant/alert.constant";
 import {Router} from "@angular/router";
 import {GetUsersRequest} from "../share/model/user/GetUsersRequest.model";
 import {isNullOrUndefined} from "../share/services/Utils.service";
 import {Title} from "@angular/platform-browser";
+import {Alert} from "../share/constant/alert.constant";
 
 @Injectable({providedIn: 'root'})
 export class UserService {
-  public userUrl = AppConstant.SERVER_API_URL + 'api/user/';
-  public users: User[] = [];
+  public userUrl = AppConstant.SERVER_API_URL + 'api/user';
 
   constructor(
     private http: HttpClient,
@@ -25,13 +24,13 @@ export class UserService {
 
   handleCreateUser(resData) {
     if (resData.id) {
-      this.alertService.success(CREATE_USER_SUCCESSFULLY);
+      this.alertService.success(Alert.CREATE_USER_SUCCESSFULLY);
       this.router.navigate(["/user"]).then();
     }
   }
 
   createUser(newUser: User) {
-    this.http.post(this.userUrl + 'create', newUser).subscribe({
+    this.http.post(`${this.userUrl}/create`, newUser).subscribe({
       next: this.handleCreateUser.bind(this),
       error: this.alertService.handleErrors.bind(this)
     })
@@ -41,6 +40,16 @@ export class UserService {
     if (isNullOrUndefined(request)) {
       request = new GetUsersRequest(null);
     }
-    return this.http.post(this.userUrl + 'list', request);
+    return this.http.post(`${this.userUrl}/list`, request);
+  }
+
+  toggleStatusUser(email: string, status: boolean) {
+    let urlToggleStatusUser;
+    if(status) {
+      urlToggleStatusUser = `${this.userUrl}/deactivate/${email}`;
+    } else {
+      urlToggleStatusUser = `${this.userUrl}/activate/${email}`;
+    }
+    return this.http.get(urlToggleStatusUser);
   }
 }

@@ -4,12 +4,12 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "./user.service";
 import {AlertService} from "../share/services/alert.service";
 import {GetUsersResponse} from "../share/model/user/GetUsersResponse.model";
-import {ResponseInfo} from "../share/model/common/ResponseInfo.model";
+import {ResponseInfo} from "../share/model/common/response-info.model";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {catchError, map, merge, startWith, switchMap, throwError} from "rxjs";
 import {GetUsersRequest} from "../share/model/user/GetUsersRequest.model";
-import {RequestInfo, SortInfo} from "../share/model/common/RequestInfo.model";
+import {RequestInfo, SortInfo} from "../share/model/common/request-info.model";
 import {MatTableDataSource} from "@angular/material/table";
 import {CheckboxFilterComponent} from "../share/UI/custom-filter/checkbox-filter.component";
 import {HeaderTitleService} from "../header/header-title.service";
@@ -17,6 +17,8 @@ import {QueryParams} from "../share/model/common/query-params.model";
 import {dataSourceActiveFilter, dataSourceRoleFilter} from "../share/constant/data-source-filter.constant";
 import {Role} from "../share/constant/role.constant";
 import {RadioBoxFilterComponent} from "../share/UI/custom-filter/radio-box-filter.component";
+import {IdResponse} from "../share/model/common/id-response.model";
+import {Alert} from "../share/constant/alert.constant";
 
 @Component({
   selector: 'app-user',
@@ -100,5 +102,16 @@ export class UserComponent implements OnInit, AfterViewInit {
 
   onEditUser(user: User) {
     this._router.navigate(['user', 'new']).then();
+  }
+
+  onChangeUserStatus(email: string, status: boolean) {
+    this._userService.toggleStatusUser(email, status).subscribe({
+      next: (resData: IdResponse) => {
+        if(resData.id) {
+          this._alertService.success(Alert.CHANGE_USER_STATUS_SUCCESSFULLY);
+        }
+      },
+      error: this._alertService.handleErrors.bind(this),
+  });
   }
 }

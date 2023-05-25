@@ -6,7 +6,7 @@ import {AppState} from "../store/app.reducer";
 import {loginStart} from "./store/auth.action";
 import {MyErrorStateMatcher} from "../share/services/my-error-state-matcher";
 import {AlertService} from "../share/services/alert.service";
-import {ResponseInfo} from "../share/model/common/ResponseInfo.model";
+import {ResponseInfo} from "../share/model/common/response-info.model";
 
 @Component({
   selector: 'app-auth',
@@ -26,7 +26,8 @@ export class AuthComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private store: Store<AppState>,
-    private alertService: AlertService
+    private alertService: AlertService,
+
   ) {
   }
 

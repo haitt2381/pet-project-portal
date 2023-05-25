@@ -1,4 +1,4 @@
-import {RequestInfo} from "../common/RequestInfo.model";
+import {RequestInfo} from "../common/request-info.model";
 import {Role} from "../../constant/role.constant";
 
 export class GetUsersRequest {
