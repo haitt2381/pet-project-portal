@@ -4,7 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {User} from "../share/model/user/user.model";
 import {AlertService} from "../share/services/alert.service";
 import {Router} from "@angular/router";
-import {GetUsersRequest} from "../share/model/user/GetUsersRequest.model";
+import {GetUsersRequest} from "../share/model/user/get-users-request.model";
 import {isNullOrUndefined} from "../share/services/Utils.service";
 import {Title} from "@angular/platform-browser";
 import {Alert} from "../share/constant/alert.constant";
@@ -41,6 +41,10 @@ export class UserService {
       request = new GetUsersRequest(null);
     }
     return this.http.post(`${this.userUrl}/list`, request);
+  }
+
+  getUser(id: string) {
+    return this.http.get(`${this.userUrl}/${id}`);
   }
 
   toggleStatusUser(email: string, status: boolean) {

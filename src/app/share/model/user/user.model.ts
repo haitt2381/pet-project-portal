@@ -1,4 +1,4 @@
-export interface User {
+export class User {
   id?: string;
   firstName?: string;
   lastName?: string;
@@ -9,4 +9,6 @@ export interface User {
   isDeleted?: boolean;
   role?: string;
   modifiedAt?: Date;
+
+
 }
