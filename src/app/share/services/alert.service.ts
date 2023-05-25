@@ -13,12 +13,11 @@ export class AlertService {
 
   handleErrors(resData) {
     if (!resData.error || !resData.error.responseInfo) {
-      this.error(DEFAULT_ERROR);
+      this.showError(DEFAULT_ERROR);
     }
-
     const responseInfo: ResponseInfo = resData.error.responseInfo;
     responseInfo.errors.forEach(error => {
-      this.error(error.message);
+      this.showError(error.message);
     });
   };
 
@@ -31,7 +30,7 @@ export class AlertService {
     });
   }
 
-  error(message: string) {
+  showError(message: string) {
     this._snackBar.open(message, 'OK', {
       horizontalPosition: 'end',
       verticalPosition: 'top',

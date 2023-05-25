@@ -138,7 +138,7 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.unsubscribeAll$.next(null);
+    // this.unsubscribeAll$.next(null);
     this.unsubscribeAll$.complete();
   }
 

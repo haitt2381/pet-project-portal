@@ -1,12 +1,11 @@
 import {createReducer, on} from "@ngrx/store";
 import {User} from "../user.model";
 import * as AuthActions from './auth.action';
-import {ResponseInfo} from "../../share/model/common/ResponseInfo.model";
 
 
 export interface State {
   auth: User | null
-  responseInfo: ResponseInfo | null
+  authError: any | null
   loading: boolean,
   isAuthenticate: boolean
 }
@@ -14,7 +13,7 @@ export interface State {
 // @ts-ignore
 const initialSate: State = {
   auth: null,
-  responseInfo: null,
+  authError: null,
   loading: false,
   isAuthenticate: false,
 }
@@ -25,7 +24,7 @@ export const authReducer = createReducer(
   on(AuthActions.loginStart, AuthActions.signupStart, (state) => (
     {
       ...state,
-      responseInfo: null,
+      authError: null,
       loading: true
     }
   )),
@@ -33,7 +32,7 @@ export const authReducer = createReducer(
   on(AuthActions.authenticateSuccess, (state, payload) => (
     {
       ...state,
-      responseInfo: null,
+      authError: null,
       auth: new User(
         payload.email,
         payload.userId,
@@ -47,11 +46,11 @@ export const authReducer = createReducer(
     }
   )),
 
-  on(AuthActions.authenticateFail, (state, {responseInfo}) => {
+  on(AuthActions.authenticateFail, (state, {authError}) => {
       return {
         ...state,
         auth: null,
-        responseInfo: responseInfo,
+        authError: authError,
         loading: false,
       }
     }
@@ -66,13 +65,13 @@ export const authReducer = createReducer(
 
   on(AuthActions.clearError, (state) => ({
       ...state,
-      responseInfo: null
+      authError: null
     })
   ),
 
   on(AuthActions.clearAuthenticate, (state) => ({
       ...state,
-      responseInfo: null,
+      authError: null,
       auth: null,
       loading: false,
       isAuthenticate: false

@@ -53,4 +53,20 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     --mdc-snackbar-supporting-text-color: #73510d;
     --mat-snack-bar-button-color: #73510d;
   }
+
+
+
+  @media screen and (min-width: 1140px) {
+    tbody tr td:nth-child(4) {
+      width: 105px;
+      background-color: #0d6831;
+    }
+  }
+
+  .userManagement {
+    tbody tr td:nth-child(4) {
+      width: 105px;
+      background-color: #0d6831;
+    }
+  }
 }

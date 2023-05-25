@@ -5,10 +5,8 @@ import {User} from "../share/model/user/user.model";
 import {AlertService} from "../share/services/alert.service";
 import {CREATE_USER_SUCCESSFULLY} from "../share/constant/alert.constant";
 import {Router} from "@angular/router";
-import {ResponseInfo} from "../share/model/common/ResponseInfo.model";
 import {GetUsersRequest} from "../share/model/user/GetUsersRequest.model";
-import {isNullOrUndefined} from "../share/Utils";
-import {RequestInfo} from "../share/model/common/RequestInfo.model";
+import {isNullOrUndefined} from "../share/services/Utils.service";
 import {Title} from "@angular/platform-browser";
 
 @Injectable({providedIn: 'root'})
@@ -25,12 +23,7 @@ export class UserService {
     titleService.setTitle("User management")
   }
 
-  handleGetUsers(resData) {
-    console.log(resData)
-  }
-
   handleCreateUser(resData) {
-    console.log(resData)
     if (resData.id) {
       this.alertService.success(CREATE_USER_SUCCESSFULLY);
       this.router.navigate(["/user"]).then();
@@ -46,8 +39,7 @@ export class UserService {
 
   getUsers(request?: GetUsersRequest) {
     if (isNullOrUndefined(request)) {
-      let requestInfo: RequestInfo = new RequestInfo(null, null, null);
-      request = new GetUsersRequest("", requestInfo);
+      request = new GetUsersRequest(null);
     }
     return this.http.post(this.userUrl + 'list', request);
   }

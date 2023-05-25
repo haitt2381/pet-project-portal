@@ -44,9 +44,8 @@ const handleAuthentication = (
 }
 
 const handleError = (errorRes: any) => {
-  let responseInfo = errorRes.error.responseInfo;
   return of(fromAuth.authenticateFail({
-    responseInfo: responseInfo
+    authError: errorRes
   }));
 }
 
@@ -146,7 +145,7 @@ export class AuthEffects {
     tap(() => {
       this.authService.clearLogoutTime()
       localStorage.removeItem('userData')
-      this.router.navigate(['/auth'])
+      this.router.navigate(['/auth']).then()
     })
   ), {dispatch: false})
 

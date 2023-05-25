@@ -4,7 +4,7 @@ import {Subscription} from "rxjs";
 import {Store} from "@ngrx/store";
 import {AppState} from "../store/app.reducer";
 import {loginStart} from "./store/auth.action";
-import {MyErrorStateMatcher} from "../share/my-error-state-matcher";
+import {MyErrorStateMatcher} from "../share/services/my-error-state-matcher";
 import {AlertService} from "../share/services/alert.service";
 import {ResponseInfo} from "../share/model/common/ResponseInfo.model";
 
@@ -33,9 +33,8 @@ export class AuthComponent implements OnInit {
   ngOnInit() {
     this.storeSub = this.store.select('auth').subscribe(authState => {
       this.isLoading = authState.loading;
-      this.responseInfo = authState.responseInfo;
-      if(this.responseInfo) {
-        this.alertService.handleErrors(this.responseInfo)
+      if(authState.authError) {
+        this.alertService.handleErrors(authState.authError)
       }
     })
 

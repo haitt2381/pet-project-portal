@@ -27,7 +27,7 @@ export class AuthService {
     this.refreshTokenExpirationTimer = setTimeout(() => {
       this.store.dispatch(logout())
     }, refreshExpirationDuration);
-    // clearTimeout(this.tokenExpirationTimer)
+    clearTimeout(this.tokenExpirationTimer)
     this.tokenExpirationTimer = this.setGetAccessTokenTimer(refreshToken, tokenExpirationDuration)
   }
 

@@ -59,7 +59,8 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { NgMatTableQueryReflectorDirective } from './share/directives/ng-mat-table-query-reflector.directive';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSelectModule} from "@angular/material/select";
-import { CustomFilterComponent } from './share/UI/custom-filter/custom-filter.component';
+import { CheckboxFilterComponent } from './share/UI/custom-filter/checkbox-filter.component';
+import {RadioBoxFilterComponent} from "./share/UI/custom-filter/radio-box-filter.component";
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { CustomFilterComponent } from './share/UI/custom-filter/custom-filter.co
     SidebarComponent,
     DashboardComponent,
     NgMatTableQueryReflectorDirective,
-    CustomFilterComponent,
+    CheckboxFilterComponent,
+    RadioBoxFilterComponent,
   ],
   imports: [
     BrowserModule,

@@ -17,7 +17,7 @@ export const loginStart = createAction(LOGIN_START, props<Login>())
 
 export const authenticateSuccess = createAction(AUTHENTICATE_SUCCESS, props<Auth>())
 
-export const authenticateFail = createAction(AUTHENTICATE_FAIL, props<{responseInfo: ResponseInfo}>())
+export const authenticateFail = createAction(AUTHENTICATE_FAIL, props<{authError}>())
 
 export const autoLogin = createAction(AUTO_LOGIN)
 

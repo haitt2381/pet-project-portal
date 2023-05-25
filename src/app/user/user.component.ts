@@ -1,140 +1,104 @@
-import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {User} from "../share/model/user/user.model";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "./user.service";
 import {AlertService} from "../share/services/alert.service";
 import {GetUsersResponse} from "../share/model/user/GetUsersResponse.model";
 import {ResponseInfo} from "../share/model/common/ResponseInfo.model";
-import {ADMIN, MEMBER, MODERATOR} from "../share/constant/role.constant";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
-import {catchError, map, merge, of, startWith, Subscription, switchMap} from "rxjs";
+import {catchError, map, merge, startWith, switchMap, throwError} from "rxjs";
 import {GetUsersRequest} from "../share/model/user/GetUsersRequest.model";
 import {RequestInfo, SortInfo} from "../share/model/common/RequestInfo.model";
 import {MatTableDataSource} from "@angular/material/table";
-import {CustomFilterComponent, DataSourceFilter} from "../share/UI/custom-filter/custom-filter.component";
+import {CheckboxFilterComponent} from "../share/UI/custom-filter/checkbox-filter.component";
 import {HeaderTitleService} from "../header/header-title.service";
-import {MdbCheckboxChange} from "mdb-angular-ui-kit/checkbox";
-import {DomSanitizer} from "@angular/platform-browser";
-import {MdbCheckboxDirective} from "mdb-angular-ui-kit/checkbox/checkbox.directive";
+import {QueryParams} from "../share/model/common/query-params.model";
+import {dataSourceActiveFilter, dataSourceRoleFilter} from "../share/constant/data-source-filter.constant";
+import {Role} from "../share/constant/role.constant";
+import {RadioBoxFilterComponent} from "../share/UI/custom-filter/radio-box-filter.component";
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
 })
-export class UserComponent implements OnInit, AfterViewInit, OnDestroy {
-  protected readonly ADMIN = ADMIN;
-  protected readonly MODERATOR = MODERATOR;
-  protected readonly MEMBER = MEMBER;
+export class UserComponent implements OnInit, AfterViewInit {
+  protected readonly ADMIN = Role.ADMIN;
+  protected readonly MODERATOR = Role.MODERATOR;
+  protected readonly MEMBER = Role.MEMBER;
+  protected readonly dataSourceRoleFilter = dataSourceRoleFilter;
+  protected readonly dataSourceActiveFilter = dataSourceActiveFilter;
 
   users: User[];
   responseInfo: ResponseInfo;
   isLoading: boolean = false;
+  dataSource: MatTableDataSource<User>;
+  queryParams: QueryParams;
+
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild("dropdownFilter", {static: true}) filter: any;
-  dataSource: MatTableDataSource<User>;
-  @ViewChild(CustomFilterComponent, {static: true}) customFilter: CustomFilterComponent;
+  @ViewChild("roleFilter", {static: true}) roleFilter: CheckboxFilterComponent;
+  @ViewChild("activeFilter", {static: true}) activeFilter: RadioBoxFilterComponent;
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private userService: UserService,
-    private alertService: AlertService,
-    private headerService: HeaderTitleService,
+    private _router: Router,
+    private _route: ActivatedRoute,
+    private _userService: UserService,
+    private _alertService: AlertService,
+    private _headerService: HeaderTitleService,
   ) {
-    headerService.setTitle("USER MANAGEMENT")
+    _headerService.setTitle("USER MANAGEMENT")
   }
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource<User>(this.users);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this._route.queryParams.subscribe((params: QueryParams) => {
+      this.queryParams = params;
+    })
   }
 
   ngAfterViewInit(): void {
-    this.route.queryParams.subscribe(params => {
-      console.log(params)
-    })
-    this.loadDataWithQueryParam();
-  }
-
-  onEditUser(user: User) {
-    this.router.navigate(['user', 'new']).then();
-  }
-
-  dataSourceRoleFilter: DataSourceFilter[] = [
-    {
-      textCheckbox: `<span class="badge badge-warning rounded-pill d-inline">${ADMIN}</span>`,
-      valueCheckbox: ADMIN.toUpperCase()
-    },
-    {
-      textCheckbox: `<span class="badge badge-success rounded-pill d-inline">${MODERATOR}</span>`,
-      valueCheckbox: MODERATOR.toUpperCase()
-    },
-    {
-      textCheckbox: `<span class="badge badge-primary rounded-pill d-inline">${MEMBER}</span>`,
-      valueCheckbox: MEMBER.toUpperCase()
-    }
-  ]
-  private sub: Subscription;
-
-  loadDataWithQueryParam() {
-    return merge(this.sort.sortChange, this.paginator.page, this.customFilter.dropdownFilter.dropdownHidden).pipe(
+    merge(
+      this.sort.sortChange,
+      this.paginator.page,
+      this.roleFilter.dropdownFilter.dropdownHidden,
+      this.activeFilter.dropdownFilter.dropdownHidden,
+    ).pipe(
       startWith({}),
       switchMap(() => {
-        this.isLoading = true;
-        let sortInfo = new SortInfo(this.sort.direction, this.sort.active);
-        let requestInfo = new RequestInfo(this.paginator.pageIndex, this.paginator.pageSize, sortInfo);
-        let getUsersRequest = new GetUsersRequest("", requestInfo);
-        return this.userService.getUsers(getUsersRequest).pipe(catchError(() => of(null)));
+        let getUsersRequest = this.buildGetUserRequest();
+        return this._userService.getUsers(getUsersRequest)
+          .pipe(catchError((err) => throwError(() => {
+              this._alertService.handleErrors(err)
+            }
+          )));
       }),
       map(data => {
         return data;
       }),
     ).subscribe({
       next: (resData: GetUsersResponse) => {
-        console.log("called observer")
         this.users = resData.data;
         this.responseInfo = resData.responseInfo;
         this.isLoading = false;
       },
-      error: this.alertService.handleErrors.bind(this)
     });
-
   }
 
-
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
+  private buildGetUserRequest() {
+    this.isLoading = true;
+    let sortInfo = new SortInfo(this.sort.direction, this.sort.active);
+    let requestInfo = new RequestInfo(this.paginator.pageIndex, this.paginator.pageSize, sortInfo);
+    let getUsersRequest = new GetUsersRequest(requestInfo);
+    getUsersRequest.setRole = this.queryParams.role;
+    getUsersRequest.isActive = this.queryParams.active;
+    return getUsersRequest;
   }
 
-  handleCheckboxChange() {
-    // this.loadDataWithQueryParam();
-    // console.log(this.filter)
-    // this.isLoading = true;
-    // let sortInfo = new SortInfo(this.sort.direction, this.sort.active);
-    // let requestInfo = new RequestInfo(this.paginator.pageIndex, this.paginator.pageSize, sortInfo);
-    // let getUsersRequest = new GetUsersRequest("", requestInfo);
-    // this.userService.getUsers(getUsersRequest).subscribe({
-    //   next: (resData: GetUsersResponse) => {
-    //     this.users = resData.data;
-    //     this.responseInfo = resData.responseInfo;
-    //     this.isLoading = false;
-    //   },
-    //   error: this.alertService.handleErrors.bind(this)
-    // })
-    let queryParams = {
-      role: null,
-    };
-    // if(filter.checked) {
-    //   queryParams = {
-    //     role: event.element.value
-    //   }
-    // }
-
-    this.router.navigate(['/user'], {queryParams: queryParams, queryParamsHandling: 'merge'}).then();
+  onEditUser(user: User) {
+    this._router.navigate(['user', 'new']).then();
   }
 }
