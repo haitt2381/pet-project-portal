@@ -1,4 +1,4 @@
-<form [formGroup]="userForm" (ngSubmit)="onSubmitUser()">
+<form [formGroup]="userForm" (ngSubmit)="onEditUser()">
   <div class="card text-center">
     <div class="card-header d-flex justify-content-between">
       <b>USER MANAGEMENT</b>
@@ -25,12 +25,12 @@
         <mat-label>Phone Number</mat-label>
       </mat-form-field>
 
-      <mat-form-field class="mb-3 full-width" appearance="outline">
+      <mat-form-field class="mb-3 full-width" appearance="outline" *ngIf="!userIdSelected">
         <input matInput type="text" formControlName="username">
         <mat-label>Username</mat-label>
       </mat-form-field>
 
-      <mat-form-field class="mb-3 full-width" appearance="outline">
+      <mat-form-field class="mb-3 full-width" appearance="outline" *ngIf="!userIdSelected">
         <input matInput type="password" formControlName="password">
         <mat-label>Password</mat-label>
       </mat-form-field>
@@ -49,7 +49,7 @@
       </button>
       <button type="submit"  mat-raised-button  color="primary"
               [disabled]="!userForm.valid"
-      >Submit
+      >Save
       </button>
     </div>
   </div>

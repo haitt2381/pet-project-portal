@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Subscription} from "rxjs";
-import {Store} from "@ngrx/store";
-import {AppState} from "../store/app.reducer";
-import {loginStart} from "./store/auth.action";
+import {Observable} from "rxjs";
 import {MyErrorStateMatcher} from "../share/services/my-error-state-matcher";
 import {AlertService} from "../share/services/alert.service";
 import {ResponseInfo} from "../share/model/common/response-info.model";
+import {AuthService} from "./auth.service";
+import {Router} from "@angular/router";
+import {AuthResponseData} from "../share/model/auth/auth-reponse-data.model";
 
 @Component({
   selector: 'app-auth',
@@ -18,29 +18,20 @@ export class AuthComponent implements OnInit {
   isLoading = false;
   responseInfo: ResponseInfo = null;
 
-  private storeSub: Subscription;
   authForm: FormGroup;
   matcher: MyErrorStateMatcher;
 
 
   constructor(
-    private fb: FormBuilder,
-    private store: Store<AppState>,
-    private alertService: AlertService,
-
+    private _fb: FormBuilder,
+    private _alertService: AlertService,
+    private _authService: AuthService,
+    private _router: Router,
   ) {
   }
 
   ngOnInit() {
-    this.storeSub = this.store.select('auth').subscribe(authState => {
-      this.isLoading = authState.loading;
-      if(authState.authError) {
-        this.alertService.handleErrors(authState.authError)
-      }
-    })
-
-
-    this.authForm = this.fb.group({
+    this.authForm = this._fb.group({
         username: ['', [Validators.required]],
         password: ['', Validators.required]
       }
@@ -54,13 +45,27 @@ export class AuthComponent implements OnInit {
       return;
     }
 
-    const username = this.authForm.value.username;
+    const emailOrUsername = this.authForm.value.username;
     const password = this.authForm.value.password;
+
+    let authObs: Observable<AuthResponseData>;
 
     this.isLoading = true;
 
-    this.store.dispatch(
-      loginStart({email: username, password: password})
-    )
+    if (this.isLoginMode) {
+      authObs = this._authService.login(emailOrUsername, password);
+    }
+
+    authObs.subscribe({
+      next: () => {
+        this.isLoading = false;
+        this._router.navigate(['/']).then();
+      },
+      error: err => {
+        this.isLoading = false;
+        this._alertService.handleErrors(err)
+      }
+      }
+    );
   }
 }

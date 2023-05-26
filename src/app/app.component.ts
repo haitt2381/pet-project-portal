@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {AppState} from "./store/app.reducer";
-import {Store} from "@ngrx/store";
-import {autoLogin} from "./auth/store/auth.action";
 import {Title} from "@angular/platform-browser";
+import {AuthService} from "./auth/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -13,13 +11,13 @@ export class AppComponent implements OnInit{
   title = 'pet-project';
 
   constructor(
-    private store: Store<AppState>,
-    private titleService:Title,
+    private _titleService:Title,
+    private _authService: AuthService,
     ) {
-    this.titleService.setTitle(this.title);
+    this._titleService.setTitle(this.title);
   }
 
   ngOnInit() {
-    this.store.dispatch(autoLogin())
+    this._authService.autoLogin();
   }
 }

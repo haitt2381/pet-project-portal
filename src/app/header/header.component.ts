@@ -1,9 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from "../auth/auth.service";
-import {map, Subscription} from "rxjs";
-import {AppState} from "../store/app.reducer";
-import {Store} from "@ngrx/store";
-import {logout} from "../auth/store/auth.action";
+import {Subscription} from "rxjs";
 import {SidebarService} from "../sidebar/sidebar.service";
 import {HeaderTitleService} from "./header-title.service";
 
@@ -20,22 +17,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private store: Store<AppState>,
     private sidebarService: SidebarService,
     private headerTitleService: HeaderTitleService,
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.headerTitleService.title.subscribe(updatedTitle => {
       this.title = updatedTitle;
     });
 
-    this.userSub = this.store.select('auth')
-      .pipe(map(authState => authState.auth))
-      .subscribe(user => {
-        this.isAuthenticated = !!user
-      })
-
+    this.authService.userLogged.subscribe(user => {
+      this.isAuthenticated = !!user;
+    })
     this.isOpenSidebar = this.sidebarService.drawerSidebar.opened;
   }
 
@@ -44,7 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onLogout() {
-    this.store.dispatch(logout())
+    this.authService.logout();
   }
 
   onToggleSidebar() {

@@ -59,7 +59,7 @@ export class UserComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
     this._route.queryParams.subscribe((params: QueryParams) => {
       this.queryParams = params;
-    })
+    });
   }
 
   ngAfterViewInit(): void {
@@ -97,21 +97,26 @@ export class UserComponent implements OnInit, AfterViewInit {
     let getUsersRequest = new GetUsersRequest(requestInfo);
     getUsersRequest.setRole = this.queryParams.role;
     getUsersRequest.isActive = this.queryParams.active;
+    getUsersRequest.isExcludeCurrentUserLogged = true;
     return getUsersRequest;
   }
 
-  onEditUser(user: User) {
+  onEditUser() {
     this._router.navigate(['user', 'new']).then();
   }
 
-  onChangeUserStatus(email: string, status: boolean) {
-    this._userService.toggleStatusUser(email, status).subscribe({
+  onChangeUserStatus(id: string, status: boolean) {
+    this._userService.toggleStatusUser(id, status).subscribe({
       next: (resData: IdResponse) => {
-        if(resData.id) {
-          this._alertService.success(Alert.CHANGE_USER_STATUS_SUCCESSFULLY);
-        }
+        this.users = this.users.map(user => {
+          if (user.id === resData.id) {
+            user.modifiedAt = new Date();
+          }
+          return user;
+        });
+        this._alertService.success(Alert.CHANGE_USER_STATUS_SUCCESSFULLY);
       },
-      error: this._alertService.handleErrors.bind(this),
-  });
+      error: err => this._alertService.handleErrors(err),
+    });
   }
 }

@@ -11,28 +11,35 @@ import {Alert} from "../share/constant/alert.constant";
 
 @Injectable({providedIn: 'root'})
 export class UserService {
-  public userUrl = AppConstant.SERVER_API_URL + 'api/user';
+  public userUrl = AppConstant.SERVER_API_URL + '/user';
 
   constructor(
-    private http: HttpClient,
-    private alertService: AlertService,
-    private router: Router,
-    private titleService: Title,
+    private _http: HttpClient,
+    private _alertService: AlertService,
+    private _router: Router,
+    private _titleService: Title,
   ) {
-    titleService.setTitle("User management")
+    _titleService.setTitle("User management")
   }
 
-  handleCreateUser(resData) {
+  handleSaveUserSuccess(resData) {
     if (resData.id) {
-      this.alertService.success(Alert.CREATE_USER_SUCCESSFULLY);
-      this.router.navigate(["/user"]).then();
+      this._alertService.success(Alert.CREATE_USER_SUCCESSFULLY);
+      this._router.navigate(["/user"]).then();
     }
   }
 
   createUser(newUser: User) {
-    this.http.post(`${this.userUrl}/create`, newUser).subscribe({
-      next: this.handleCreateUser.bind(this),
-      error: this.alertService.handleErrors.bind(this)
+    this._http.post(`${this.userUrl}/create`, newUser).subscribe({
+      next: this.handleSaveUserSuccess.bind(this),
+      error: this._alertService.handleErrors.bind(this)
+    })
+  }
+
+  updateUser(user: User) {
+    this._http.put(`${this.userUrl}/update`, user).subscribe({
+      next: this.handleSaveUserSuccess.bind(this),
+      error: this._alertService.handleErrors.bind(this),
     })
   }
 
@@ -40,20 +47,20 @@ export class UserService {
     if (isNullOrUndefined(request)) {
       request = new GetUsersRequest(null);
     }
-    return this.http.post(`${this.userUrl}/list`, request);
+    return this._http.post(`${this.userUrl}/list`, request);
   }
 
   getUser(id: string) {
-    return this.http.get(`${this.userUrl}/${id}`);
+    return this._http.get(`${this.userUrl}/${id}`);
   }
 
-  toggleStatusUser(email: string, status: boolean) {
+  toggleStatusUser(id: string, status: boolean) {
     let urlToggleStatusUser;
     if(status) {
-      urlToggleStatusUser = `${this.userUrl}/deactivate/${email}`;
+      urlToggleStatusUser = `${this.userUrl}/deactivate/${id}`;
     } else {
-      urlToggleStatusUser = `${this.userUrl}/activate/${email}`;
+      urlToggleStatusUser = `${this.userUrl}/activate/${id}`;
     }
-    return this.http.get(urlToggleStatusUser);
+    return this._http.get(urlToggleStatusUser);
   }
 }

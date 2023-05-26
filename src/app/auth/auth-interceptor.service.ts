@@ -1,25 +1,21 @@
 import {Injectable} from '@angular/core';
 import {HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {exhaustMap, map, take} from 'rxjs/operators';
+import {exhaustMap, take} from 'rxjs/operators';
 
 import {AuthService} from './auth.service';
-import {Store} from "@ngrx/store";
-import * as fromApp from "../store/app.reducer";
+import {UserLogin} from "../share/model/auth/user-login.model";
 
 @Injectable()
 export class AuthInterceptorService implements HttpInterceptor {
   constructor(
     private authService: AuthService,
-    private store: Store<fromApp.AppState>
-  ) {}
+  ) {
+  }
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    return this.store.select('auth').pipe(
+    return this.authService.userLogged.pipe(
       take(1),
-      map(authState => {
-        return authState.auth
-      }),
-      exhaustMap(auth => {
+      exhaustMap((auth: UserLogin) => {
         if (!auth || !auth.token) {
           return next.handle(req);
         }

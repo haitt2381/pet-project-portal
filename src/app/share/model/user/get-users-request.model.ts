@@ -2,10 +2,11 @@ import {RequestInfo} from "../common/request-info.model";
 import {Role} from "../../constant/role.constant";
 
 export class GetUsersRequest {
+  requestInfo?: RequestInfo;
   keyword?: string;
   private role?: string[];
   isActive?: boolean;
-  requestInfo?: RequestInfo;
+  isExcludeCurrentUserLogged?: boolean;
 
   constructor(requestInfo?: RequestInfo) {
     this.keyword = "";

@@ -3,7 +3,7 @@
 <div class="card">
   <div class="card-header d-flex justify-content-between">
     <button type="button" mat-raised-button color="primary"
-      (click)="onEditUser(undefined)"
+      (click)="onEditUser()"
     > Create user
     </button>
   </div>
@@ -74,7 +74,7 @@
             matTooltipPosition="right"
             [checked]="user.isActive"
             [matTooltip]="matSlideToggle.checked ? 'Deactivate User' : 'Active User'"
-            (change)="onChangeUserStatus(user.email, user.isActive)"
+            (change)="onChangeUserStatus(user.id, user.isActive)"
           ></mat-slide-toggle>
         </td>
         <td>

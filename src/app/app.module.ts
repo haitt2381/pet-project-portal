@@ -21,13 +21,9 @@ import {MdbTooltipModule} from 'mdb-angular-ui-kit/tooltip';
 import {MdbValidationModule} from 'mdb-angular-ui-kit/validation';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {StoreModule} from '@ngrx/store';
 import {AppRoutingModule} from "./app-routing.module";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {ReactiveFormsModule} from "@angular/forms";
-import {EffectsModule} from '@ngrx/effects';
-import {AuthEffects} from "./auth/store/auth.effect";
-import * as fromApp from './store/app.reducer'
 import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatSidenavModule} from "@angular/material/sidenav";
@@ -99,8 +95,6 @@ import {EmptyStateComponent} from "./share/UI/empty-state/empty-state.component"
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    StoreModule.forRoot(fromApp.appReducer),
-    EffectsModule.forRoot([AuthEffects,]),
     BrowserAnimationsModule,
     MatToolbarModule,
     MatButtonModule,

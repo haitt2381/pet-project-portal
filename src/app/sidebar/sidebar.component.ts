@@ -1,8 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SidebarService} from "./sidebar.service";
-import {AppState} from "../store/app.reducer";
-import {Store} from "@ngrx/store";
 import {Subscription} from "rxjs";
+import {AuthService} from "../auth/auth.service";
 
 @Component({
   selector: 'app-sidebar',
@@ -16,16 +15,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   constructor(
     private sidebarService: SidebarService,
-    private store: Store<AppState>
+    private _authService: AuthService,
   ) {
   }
 
   ngOnInit(): void {
     this.sidebarService.drawerSidebar = this.drawerSidebar;
-    this.userSub = this.store.select("auth").subscribe(auth => {
-      this.isAuthenticated = auth.isAuthenticate;
-    });
-
+    this.userSub = this._authService.userLogged.subscribe(user => {
+      this.isAuthenticated = !!user;
+    })
   }
 
   ngOnDestroy(): void {

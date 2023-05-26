@@ -28,23 +28,26 @@ export class UserEditComponent implements OnInit {
 
   ngOnInit() {
     this.userIdSelected = this._route.snapshot.paramMap.get('id');
-    this._userService.getUser(this.userIdSelected).subscribe({
-      next: (resData: GetUserResponse) => {
-        this.userSelected = resData.data;
+    if (this.userIdSelected) {
+      this._userService.getUser(this.userIdSelected).subscribe({
+        next: (resData: GetUserResponse) => {
+          this.userSelected = resData.data;
 
-        let user = new User();
-        user.firstName = this.userSelected?.firstName;
-        user.lastName = this.userSelected?.lastName;
-        user.email = this.userSelected?.email;
-        user.phoneNumber = this.userSelected?.phoneNumber;
-        user.username = this.userSelected?.username;
-        user.role = this.userSelected?.role;
-        this.initForm(user);
-      },
-      error: err => {
-        this._alertService.handleErrors(err)
-      },
-    });
+          let user = new User();
+          user.firstName = this.userSelected?.firstName;
+          user.lastName = this.userSelected?.lastName;
+          user.email = this.userSelected?.email;
+          user.phoneNumber = this.userSelected?.phoneNumber;
+          user.username = this.userSelected?.username;
+          user.role = this.userSelected?.role;
+          this.initForm(user);
+        },
+        error: err => {
+          this._alertService.handleErrors(err)
+        },
+      });
+    }
+
     let user = new User();
     this.initForm(user);
   }
@@ -61,13 +64,17 @@ export class UserEditComponent implements OnInit {
     })
   }
 
-  onSubmitUser() {
+  onEditUser() {
     if (this.userForm.valid) {
-      this._userService.createUser(this.userForm.value);
+
+      if(this.userIdSelected) {
+      } else {
+        this._userService.createUser(this.userForm.value);
+      }
     }
   }
 
   onCancelEditUser() {
-    this._router.navigate(['../'], {relativeTo: this._route}).then();
+    this._router.navigate(['/user'], {relativeTo: this._route}).then();
   }
 }
