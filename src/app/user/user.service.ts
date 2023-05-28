@@ -24,22 +24,22 @@ export class UserService {
 
   handleSaveUserSuccess(resData) {
     if (resData.id) {
-      this._alertService.success(Alert.CREATE_USER_SUCCESSFULLY);
+      this._alertService.success(Alert.USER_CREATE_SUCCESS);
       this._router.navigate(["/user"]).then();
     }
   }
 
   createUser(newUser: User) {
     this._http.post(`${this.userUrl}/create`, newUser).subscribe({
-      next: this.handleSaveUserSuccess.bind(this),
-      error: this._alertService.handleErrors.bind(this)
+      next: (resData) => this.handleSaveUserSuccess(resData),
+      error: (err) => this._alertService.handleErrors(err)
     })
   }
 
   updateUser(user: User) {
     this._http.put(`${this.userUrl}/update`, user).subscribe({
-      next: this.handleSaveUserSuccess.bind(this),
-      error: this._alertService.handleErrors.bind(this),
+      next: (resData) => this.handleSaveUserSuccess(resData),
+      error: (err) => this._alertService.handleErrors(err),
     })
   }
 
@@ -63,4 +63,9 @@ export class UserService {
     }
     return this._http.get(urlToggleStatusUser);
   }
+
+  deleteUser(id: string){
+    return this._http.delete(`${this.userUrl}/${id}`)
+  }
+
 }

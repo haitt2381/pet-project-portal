@@ -19,6 +19,7 @@ import {Role} from "../share/constant/role.constant";
 import {RadioBoxFilterComponent} from "../share/UI/custom-filter/radio-box-filter.component";
 import {IdResponse} from "../share/model/common/id-response.model";
 import {Alert} from "../share/constant/alert.constant";
+import {MdbDropdownDirective} from "mdb-angular-ui-kit/dropdown";
 
 @Component({
   selector: 'app-user',
@@ -71,6 +72,7 @@ export class UserComponent implements OnInit, AfterViewInit {
     ).pipe(
       startWith({}),
       switchMap(() => {
+        this.isLoading = true;
         let getUsersRequest = this.buildGetUserRequest();
         return this._userService.getUsers(getUsersRequest)
           .pipe(catchError((err) => throwError(() => {
@@ -91,7 +93,6 @@ export class UserComponent implements OnInit, AfterViewInit {
   }
 
   private buildGetUserRequest() {
-    this.isLoading = true;
     let sortInfo = new SortInfo(this.sort.direction, this.sort.active);
     let requestInfo = new RequestInfo(this.paginator.pageIndex, this.paginator.pageSize, sortInfo);
     let getUsersRequest = new GetUsersRequest(requestInfo);
@@ -106,6 +107,7 @@ export class UserComponent implements OnInit, AfterViewInit {
   }
 
   onChangeUserStatus(id: string, status: boolean) {
+    this.isLoading = true;
     this._userService.toggleStatusUser(id, status).subscribe({
       next: (resData: IdResponse) => {
         this.users = this.users.map(user => {
@@ -114,9 +116,48 @@ export class UserComponent implements OnInit, AfterViewInit {
           }
           return user;
         });
-        this._alertService.success(Alert.CHANGE_USER_STATUS_SUCCESSFULLY);
+        this.isLoading = false;
+        this._alertService.success(Alert.USER_CHANGE_STATUS_SUCCESS);
       },
-      error: err => this._alertService.handleErrors(err),
+      error: err => {
+        this.isLoading = false;
+        this._alertService.handleErrors(err)
+      },
     });
+  }
+
+  onDeleteUser(id: string, dropdownConfirmDelete: MdbDropdownDirective) {
+    this.isLoading = true;
+    this._userService.deleteUser(id).subscribe({
+      next: (resData: IdResponse) => {
+        if(resData.id) {
+          this.loadUsers();
+        }
+        this._alertService.success(Alert.USER_DELETE_SUCCESS);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this._alertService.handleErrors(err)
+      }
+    });
+    dropdownConfirmDelete.hide();
+  }
+
+  loadUsers() {
+    this._userService.getUsers(this.buildGetUserRequest()).subscribe({
+      next: (resData: GetUsersResponse) => {
+        this.users = resData.data;
+        this.responseInfo = resData.responseInfo;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this._alertService.handleErrors(err);
+      }
+    })
+  }
+
+  onCancelDelete(dropdownConfirmDelete: MdbDropdownDirective) {
+    dropdownConfirmDelete.hide();
   }
 }

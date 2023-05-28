@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {User} from "../../share/model/user/user.model";
-import {ActivatedRoute, ParamMap, Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "../user.service";
-import {switchMap} from "rxjs";
 import {AlertService} from "../../share/services/alert.service";
 import {GetUserResponse} from "../../share/model/user/get-user-response.model";
 
@@ -34,6 +33,7 @@ export class UserEditComponent implements OnInit {
           this.userSelected = resData.data;
 
           let user = new User();
+          user.id = this.userSelected?.id;
           user.firstName = this.userSelected?.firstName;
           user.lastName = this.userSelected?.lastName;
           user.email = this.userSelected?.email;
@@ -54,23 +54,26 @@ export class UserEditComponent implements OnInit {
 
   private initForm(user: User) {
     this.userForm = this._fb.group({
+      id: [user?.id],
       firstName: [user?.firstName, Validators.required],
       lastName: [user?.lastName, Validators.required],
       email: [user?.email, [Validators.required, Validators.email]],
       phoneNumber: [user?.phoneNumber, Validators.required],
-      username: [user?.username, Validators.required],
-      password: ['', Validators.required],
+      username: [user?.username, this.userIdSelected ? Validators.nullValidator : Validators.required],
+      password: ['', this.userIdSelected ? Validators.nullValidator : Validators.required],
       role: [user?.role, Validators.required]
     })
   }
 
   onEditUser() {
-    if (this.userForm.valid) {
+    if (this.userForm.invalid) {
+      return;
+    }
 
-      if(this.userIdSelected) {
-      } else {
-        this._userService.createUser(this.userForm.value);
-      }
+    if (this.userIdSelected) {
+      this._userService.updateUser(this.userForm.value);
+    } else {
+      this._userService.createUser(this.userForm.value);
     }
   }
 

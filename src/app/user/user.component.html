@@ -82,7 +82,7 @@
         </td>
 
         <td>
-          <div mdbDropdown class="dropdown">
+          <div mdbDropdown class="dropdown" [closeOnItemClick]="false">
             <a mdbDropdownToggle>
               <i class="fa-regular fa-square-caret-down fa-xl text-hover"></i>
             </a>
@@ -94,11 +94,17 @@
                   &nbsp; Edit
                 </a>
               </li>
-              <li>
-                <a class="dropdown-item" href="#">
-                  <i class="fa-solid fa-trash-can text-danger"></i>
-                  &nbsp; Delete
-                </a>
+              <li mdbDropdown class="dropdown" #dropdownConfirmDelete>
+                  <a mdbDropdownToggle class="btn dropdown-item">
+                    <i class="fa-solid fa-trash-can text-danger"></i>
+                    &nbsp; Delete
+                  </a>
+                  <div mdbDropdownMenu class="dropdown-menu px-4 py-3">
+                    Are you sure to delete this user
+                    <div class="dropdown-divider"></div>
+                     <a class="btn btn-primary btn-sm me-2" (click)="onDeleteUser(user.id, dropdownConfirmDelete)">Ok</a>
+                     <a class="btn btn-danger btn-sm" (click)="onCancelDelete(dropdownConfirmDelete) ">Cancel</a>
+                  </div>
               </li>
             </ul>
           </div>
@@ -109,8 +115,8 @@
 
   </div>
   <div class="card-footer">
-    <app-empty-state
-      *ngIf="users === undefined || users.length === 0"></app-empty-state>
+    <app-empty-state *ngIf="users === undefined || users.length === 0"></app-empty-state>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 
     <mat-paginator
       showFirstLastButtons
