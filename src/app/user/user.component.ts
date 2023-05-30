@@ -19,7 +19,6 @@ import {Role} from "../share/constant/role.constant";
 import {RadioBoxFilterComponent} from "../share/UI/custom-filter/radio-box-filter.component";
 import {IdResponse} from "../share/model/common/id-response.model";
 import {Alert} from "../share/constant/alert.constant";
-import {MdbDropdownDirective} from "mdb-angular-ui-kit/dropdown";
 import {MatDialog} from "@angular/material/dialog";
 import {PopConfirmComponent} from "../share/UI/pop-comfirm/pop-confirm/pop-confirm.component";
 import {PopConfirmModel} from "../share/model/UI/pop-confirm.model";
@@ -42,6 +41,7 @@ export class UserComponent implements OnInit, AfterViewInit {
   isLoading: boolean = false;
   dataSource: MatTableDataSource<User>;
   queryParams: QueryParams;
+  isRecycleMode: boolean = false;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -107,6 +107,7 @@ export class UserComponent implements OnInit, AfterViewInit {
     getUsersRequest.setRole = this.queryParams.role;
     getUsersRequest.isActive = this.queryParams.active;
     getUsersRequest.isExcludeCurrentUserLogged = true;
+    getUsersRequest.isDeleted = this.isRecycleMode;
     return getUsersRequest;
   }
 
@@ -175,7 +176,51 @@ export class UserComponent implements OnInit, AfterViewInit {
     })
   }
 
-  onCancelDelete(dropdownConfirmDelete: MdbDropdownDirective) {
-    dropdownConfirmDelete.hide();
+  onToggleRecycleMode() {
+    this.isRecycleMode = !this.isRecycleMode;
+    this.loadUsers();
+    let titlePage = this.isRecycleMode? "USER RECYCLE BIN" : "USER MANAGEMENT";
+    this._headerService.setTitle(titlePage);
+  }
+
+  onHardDeleteUser(id: string) {
+    let dialogRef = this._dialog.open(PopConfirmComponent, {
+      data: new PopConfirmModel("Are you sure you want to completely delete this user? If so, you cannot undo this action."),
+    });
+    dialogRef.afterClosed().subscribe(action => {
+      switch (action) {
+        case PopConfirmConstant.TEXT_SURE: {
+          this.isLoading = true;
+          this._userService.hardDeleteUser(id).subscribe({
+            next: (resData: IdResponse) => {
+              if (resData.id) {
+                this.loadUsers();
+              }
+              this._alertService.success(Alert.USER_DELETE_SUCCESS);
+            },
+            error: (err) => {
+              this.isLoading = false;
+              this._alertService.handleErrors(err)
+            }
+          });
+        }
+      }
+    });
+  }
+
+  onRestoreUser(id: string) {
+    this.isLoading = true;
+    this._userService.restoreUser(id).subscribe({
+      next: (resData: IdResponse) => {
+        if(resData.id) {
+          this.loadUsers();
+        }
+        this._alertService.success(Alert.USER_RESTORE_SUCCESS);
+      },
+      error: err => {
+        this.isLoading = false;
+        this._alertService.handleErrors(err);
+      }
+    });
   }
 }

@@ -6,7 +6,6 @@ import {ThemePalette} from "@angular/material/core";
 @Component({
   selector: 'app-pop-confirm',
   templateUrl: './pop-confirm.component.html',
-  styleUrls: ['./pop-confirm.component.scss']
 })
 export class PopConfirmComponent {
   color: ThemePalette;

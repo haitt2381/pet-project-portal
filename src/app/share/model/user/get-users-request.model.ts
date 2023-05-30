@@ -7,6 +7,7 @@ export class GetUsersRequest {
   private role?: string[];
   isActive?: boolean;
   isExcludeCurrentUserLogged?: boolean;
+  isDeleted?: boolean;
 
   constructor(requestInfo?: RequestInfo) {
     this.keyword = "";

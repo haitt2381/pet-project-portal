@@ -56,16 +56,24 @@ export class UserService {
 
   toggleStatusUser(id: string, status: boolean) {
     let urlToggleStatusUser;
-    if(status) {
+    if (status) {
       urlToggleStatusUser = `${this.userUrl}/deactivate/${id}`;
     } else {
       urlToggleStatusUser = `${this.userUrl}/activate/${id}`;
     }
-    return this._http.get(urlToggleStatusUser);
+    return this._http.patch(urlToggleStatusUser, null);
   }
 
-  deleteUser(id: string){
-    return this._http.delete(`${this.userUrl}/${id}`)
+  deleteUser(id: string) {
+    return this._http.delete(`${this.userUrl}/${id}`);
+  }
+
+  hardDeleteUser(id: string) {
+    return this._http.delete(`${this.userUrl}/hard-delete/${id}`);
+  }
+
+  restoreUser(id: string) {
+    return this._http.patch(`${this.userUrl}/restore/${id}`, null);
   }
 
 }

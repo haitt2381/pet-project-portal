@@ -72,8 +72,9 @@
           <mat-slide-toggle #matSlideToggle
             color="primary"
             matTooltipPosition="right"
-            [matTooltip]="matSlideToggle.checked ? 'Deactivate User' : 'Active User'"
+            [matTooltip]="isRecycleMode ? '' : (matSlideToggle.checked ? 'Deactivate User' : 'Active User')"
             [checked]="user.isActive"
+            [disabled]="isRecycleMode"
             (change)="onChangeUserStatus(user.id, user.isActive)"
           ></mat-slide-toggle>
         </td>
@@ -84,23 +85,36 @@
         <td>
           <div mdbDropdown class="dropdown" [closeOnItemClick]="false">
             <a mdbDropdownToggle>
-              <i class="fa-regular fa-square-caret-down fa-xl text-hover"></i>
+              <i class="fa-regular fa-square-caret-down fa-xl cursor-pointer"></i>
             </a>
-            <ul mdbDropdownMenu class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <ul mdbDropdownMenu class="dropdown-menu cursor-pointer" aria-labelledby="dropdownMenuLink">
               <li>
-                <a class="dropdown-item" [routerLink]="['edit/', user.id]">
+                <a *ngIf="!isRecycleMode" class="dropdown-item" [routerLink]="['edit/', user.id]">
                   <i class="fa-solid fa-pen-to-square text-success"></i>
-                  &nbsp; Edit
+                  &nbsp;Edit
+                </a>
+                <a *ngIf="isRecycleMode" class="dropdown-item" (click)="onRestoreUser(user.id)">
+                  <i class="fa-solid fa-pen-to-square text-success"></i>
+                  &nbsp;Restore
                 </a>
               </li>
-              <li class="dropdown">
-                <a class="btn dropdown-item" (click)="onDeleteUser(user.id)">
+              <li class="dropdown cursor-pointer">
+                <a *ngIf="!isRecycleMode" class="dropdown-item" (click)="onDeleteUser(user.id)">
                   <i class="fa-solid fa-trash-can text-danger"></i>
-                  &nbsp; Delete
+                  &nbsp;Delete
+                </a>
+                <a *ngIf="isRecycleMode" class="dropdown-item" (click)="onHardDeleteUser(user.id)">
+                  <i class="fa-solid fa-trash-can text-danger"></i>
+                  &nbsp;Delete
                 </a>
               </li>
             </ul>
           </div>
+        </td>
+      </tr>
+      <tr  *ngIf="users === undefined || users.length === 0">
+        <td colspan="6">
+          <app-empty-state></app-empty-state>
         </td>
       </tr>
       </tbody>
@@ -108,14 +122,24 @@
 
   </div>
   <div class="card-footer">
-    <app-empty-state *ngIf="users === undefined || users.length === 0"></app-empty-state>
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
-
-    <mat-paginator
-      showFirstLastButtons
-      [pageSizeOptions]="[5, 10, 25]"
-      [length]="responseInfo?.total"
-      [pageSize]="responseInfo?.size"
-    ></mat-paginator>
+    <div>
+      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="d-flex justify-content-between">
+      <a class="btn btn-tertiary mt-2" role="button"
+        matTooltipPosition="above"
+        [matTooltip]="isRecycleMode ? 'User management' : 'Recycle user'"
+        (click)="onToggleRecycleMode()"
+      >
+        <i *ngIf="isRecycleMode" class="fa-solid fa-users-line fa-xl"></i>
+        <i *ngIf="!isRecycleMode" class="fa-solid fa-recycle fa-xl"></i>
+      </a>
+      <mat-paginator
+        showFirstLastButtons
+        [pageSizeOptions]="[5, 10, 25]"
+        [length]="responseInfo?.total"
+        [pageSize]="responseInfo?.size"
+      ></mat-paginator>
+    </div>
   </div>
 </div>
