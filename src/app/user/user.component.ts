@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {User} from "../share/model/user/user.model";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "./user.service";
@@ -20,6 +20,10 @@ import {RadioBoxFilterComponent} from "../share/UI/custom-filter/radio-box-filte
 import {IdResponse} from "../share/model/common/id-response.model";
 import {Alert} from "../share/constant/alert.constant";
 import {MdbDropdownDirective} from "mdb-angular-ui-kit/dropdown";
+import {MatDialog} from "@angular/material/dialog";
+import {PopConfirmComponent} from "../share/UI/pop-comfirm/pop-confirm/pop-confirm.component";
+import {PopConfirmModel} from "../share/model/UI/pop-confirm.model";
+import {PopConfirmConstant} from "../share/constant/pop-confirm.constant";
 
 @Component({
   selector: 'app-user',
@@ -50,6 +54,8 @@ export class UserComponent implements OnInit, AfterViewInit {
     private _userService: UserService,
     private _alertService: AlertService,
     private _headerService: HeaderTitleService,
+    private _cd: ChangeDetectorRef,
+    private _dialog: MatDialog,
   ) {
     _headerService.setTitle("USER MANAGEMENT")
   }
@@ -73,6 +79,7 @@ export class UserComponent implements OnInit, AfterViewInit {
       startWith({}),
       switchMap(() => {
         this.isLoading = true;
+        this._cd.detectChanges();
         let getUsersRequest = this.buildGetUserRequest();
         return this._userService.getUsers(getUsersRequest)
           .pipe(catchError((err) => throwError(() => {
@@ -88,6 +95,7 @@ export class UserComponent implements OnInit, AfterViewInit {
         this.users = resData.data;
         this.responseInfo = resData.responseInfo;
         this.isLoading = false;
+        this._cd.detectChanges();
       },
     });
   }
@@ -126,21 +134,29 @@ export class UserComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onDeleteUser(id: string, dropdownConfirmDelete: MdbDropdownDirective) {
-    this.isLoading = true;
-    this._userService.deleteUser(id).subscribe({
-      next: (resData: IdResponse) => {
-        if(resData.id) {
-          this.loadUsers();
+  onDeleteUser(id: string) {
+    let dialogRef = this._dialog.open(PopConfirmComponent, {
+      data: new PopConfirmModel("Are you sure to delete this user"),
+    });
+    dialogRef.afterClosed().subscribe(action => {
+      switch (action) {
+        case PopConfirmConstant.TEXT_SURE: {
+          this.isLoading = true;
+          this._userService.deleteUser(id).subscribe({
+            next: (resData: IdResponse) => {
+              if (resData.id) {
+                this.loadUsers();
+              }
+              this._alertService.success(Alert.USER_DELETE_SUCCESS);
+            },
+            error: (err) => {
+              this.isLoading = false;
+              this._alertService.handleErrors(err)
+            }
+          });
         }
-        this._alertService.success(Alert.USER_DELETE_SUCCESS);
-      },
-      error: (err) => {
-        this.isLoading = false;
-        this._alertService.handleErrors(err)
       }
     });
-    dropdownConfirmDelete.hide();
   }
 
   loadUsers() {
@@ -149,10 +165,12 @@ export class UserComponent implements OnInit, AfterViewInit {
         this.users = resData.data;
         this.responseInfo = resData.responseInfo;
         this.isLoading = false;
+        this._cd.detectChanges();
       },
       error: (err) => {
         this.isLoading = false;
         this._alertService.handleErrors(err);
+        this._cd.detectChanges();
       }
     })
   }

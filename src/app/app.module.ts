@@ -58,6 +58,7 @@ import {MatSelectModule} from "@angular/material/select";
 import { CheckboxFilterComponent } from './share/UI/custom-filter/checkbox-filter.component';
 import {RadioBoxFilterComponent} from "./share/UI/custom-filter/radio-box-filter.component";
 import {EmptyStateComponent} from "./share/UI/empty-state/empty-state.component";
+import { PopConfirmComponent } from './share/UI/pop-comfirm/pop-confirm/pop-confirm.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import {EmptyStateComponent} from "./share/UI/empty-state/empty-state.component"
     CheckboxFilterComponent,
     RadioBoxFilterComponent,
     EmptyStateComponent,
+    PopConfirmComponent,
   ],
   imports: [
     BrowserModule,
