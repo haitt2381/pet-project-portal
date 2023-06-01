@@ -2,8 +2,7 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {MdbCheckboxChange} from "mdb-angular-ui-kit/checkbox";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DomSanitizer} from "@angular/platform-browser";
-import {DataSourceFilter} from "../../model/common/data-source-filter.model";
-import {QueryParams} from "../../model/common/query-params.model";
+import {DataSourceFilter} from "../../../model/common/data-source-filter.model";
 
 @Component({
   selector: 'app-checkbox-filter',
@@ -26,7 +25,7 @@ export class CheckboxFilterComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.route.queryParams.subscribe((params: QueryParams) => {
+    this.route.queryParams.subscribe((params) => {
       if (params[this.paramName]) {
         this.params = params[this.paramName]
       }
@@ -37,7 +36,6 @@ export class CheckboxFilterComponent implements OnInit{
   handleCheckboxChange($event: MdbCheckboxChange) {
     let queryParams;
     let uniqueValue;
-    // this.params = this.params ? this.params : [];
 
     if($event.checked) {
       if(typeof this.params === 'string') {

@@ -1,0 +1,9 @@
+<mdb-form-control class="d-flex border" [ngClass]="{'border border-danger rounded': this.dateRangePickerForm.invalid}" >
+    <mat-date-range-input [formGroup]="dateRangePickerForm" mdbInput [rangePicker]="picker" class="form-control" style="min-width: 215px">
+        <input matStartDate (dateChange)="onChangeDateFilter()" placeholder="Start date" formControlName="start" readonly>
+        <input matEndDate (dateChange)="onChangeDateFilter()" placeholder="End date" formControlName="end" readonly>
+    </mat-date-range-input>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  <i *ngIf="!isDateSelected" class="fa-regular fa-calendar-check fa-lg pt-3 pe-2" (click)="picker.open()"></i>
+  <i *ngIf="isDateSelected" class="fa-regular fa-calendar-xmark fa-lg pt-3 pe-2 text-primary" (click)="onRemoveDateFilter()"></i>
+</mdb-form-control>

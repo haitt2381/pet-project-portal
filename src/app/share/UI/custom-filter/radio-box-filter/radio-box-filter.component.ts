@@ -1,8 +1,8 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {DomSanitizer} from "@angular/platform-browser";
-import {DataSourceFilter} from "../../model/common/data-source-filter.model";
-import {QueryParams} from "../../model/common/query-params.model";
+import {DataSourceFilter} from "../../../model/common/data-source-filter.model";
+import {QueryParams} from "../../../model/common/query-params.model";
 
 @Component({
   selector: 'app-radio-box-filter',
@@ -29,7 +29,6 @@ export class RadioBoxFilterComponent implements OnInit{
         this.params = params[this.paramName]
       }
     })
-
   }
 
   handleRadioBoxChange($event, value: string) {

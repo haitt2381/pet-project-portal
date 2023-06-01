@@ -1,8 +1,6 @@
 export interface QueryParams {
-  role: string[]
-  active: boolean
-  page_size: string
-  page_index: string
-  sort_active: string
-  sort_direction: string
+  role: string[];
+  active: boolean;
+  from_date: string;
+  to_date: string;
 }

@@ -8,6 +8,8 @@ export class GetUsersRequest {
   isActive?: boolean;
   isExcludeCurrentUserLogged?: boolean;
   isDeleted?: boolean;
+  fromDate?: Date;
+  toDate?: Date;
 
   constructor(requestInfo?: RequestInfo) {
     this.keyword = "";
@@ -25,12 +27,12 @@ export class GetUsersRequest {
         value = Array.of(value);
       }
 
-      let rolesEnum = Object.keys(Role);
+      let rolesEnum = Object.values(Role).toString();
       value = value.filter(role => rolesEnum.includes(role));
     } else {
       value = null;
     }
-
+    console.log()
     this.role = value;
   }
 }
