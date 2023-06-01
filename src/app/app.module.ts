@@ -31,7 +31,7 @@ import {MatListModule} from "@angular/material/list";
 import {MatIconModule} from "@angular/material/icon";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatMenuModule} from "@angular/material/menu";
-import {MatLineModule, MatNativeDateModule, MatRippleModule} from "@angular/material/core";
+import {MatLineModule, MatRippleModule} from "@angular/material/core";
 import {MatCardModule} from "@angular/material/card";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
@@ -55,12 +55,10 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { NgMatTableQueryReflectorDirective } from './share/directives/ng-mat-table-query-reflector.directive';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSelectModule} from "@angular/material/select";
-import { CheckboxFilterComponent } from './share/UI/custom-filter/check-box-filter/checkbox-filter.component';
-import {RadioBoxFilterComponent} from "./share/UI/custom-filter/radio-box-filter/radio-box-filter.component";
+import { CheckboxFilterComponent } from './share/UI/custom-filter/checkbox-filter.component';
+import {RadioBoxFilterComponent} from "./share/UI/custom-filter/radio-box-filter.component";
 import {EmptyStateComponent} from "./share/UI/empty-state/empty-state.component";
 import { PopConfirmComponent } from './share/UI/pop-comfirm/pop-confirm/pop-confirm.component';
-import {MatDatepickerModule} from "@angular/material/datepicker";
-import { DateRangePickerComponent } from './share/UI/custom-filter/date-range-picker/date-range-picker.component';
 
 @NgModule({
   declarations: [
@@ -76,58 +74,55 @@ import { DateRangePickerComponent } from './share/UI/custom-filter/date-range-pi
     RadioBoxFilterComponent,
     EmptyStateComponent,
     PopConfirmComponent,
-    DateRangePickerComponent,
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        MdbAccordionModule,
-        MdbCarouselModule,
-        MdbCheckboxModule,
-        MdbCollapseModule,
-        MdbDropdownModule,
-        MdbFormsModule,
-        MdbModalModule,
-        MdbPopoverModule,
-        MdbRadioModule,
-        MdbRangeModule,
-        MdbRippleModule,
-        MdbScrollspyModule,
-        MdbTabsModule,
-        MdbTooltipModule,
-        MdbValidationModule,
-        BrowserModule,
-        AppRoutingModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        BrowserAnimationsModule,
-        MatToolbarModule,
-        MatButtonModule,
-        MatIconModule,
-        MatSidenavModule,
-        MatListModule,
-        MatTooltipModule,
-        MatMenuModule,
-        MatLineModule,
-        MatGridListModule,
-        MatCardModule,
-        MatProgressBarModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSnackBarModule,
-        MatProgressSpinnerModule,
-        MatTableModule,
-        MatSortModule,
-        MatPaginatorModule,
-        MatRippleModule,
-        MatDialogModule,
-        MatRadioModule,
-        MatSlideToggleModule,
-        MatCheckboxModule,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    MdbAccordionModule,
+    MdbCarouselModule,
+    MdbCheckboxModule,
+    MdbCollapseModule,
+    MdbDropdownModule,
+    MdbFormsModule,
+    MdbModalModule,
+    MdbPopoverModule,
+    MdbRadioModule,
+    MdbRangeModule,
+    MdbRippleModule,
+    MdbScrollspyModule,
+    MdbTabsModule,
+    MdbTooltipModule,
+    MdbValidationModule,
+    BrowserModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatListModule,
+    MatTooltipModule,
+    MatMenuModule,
+    MatLineModule,
+    MatGridListModule,
+    MatCardModule,
+    MatProgressBarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatRippleModule,
+    MatDialogModule,
+    MatRadioModule,
+    MatSlideToggleModule,
+    MatCheckboxModule,
+    MatSelectModule,
+  ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}
   ],

@@ -4,7 +4,6 @@ import {interval, Subject, Subscription, takeUntil} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatTableDataSource} from "@angular/material/table";
 import {PageEvent} from "@angular/material/paginator";
-import {QueryParamsConstant as paramName }  from "../constant/query-params.constant";
 
 @Directive({
   selector: '[appNgMatTableQueryReflector]'
@@ -34,18 +33,18 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
     const activePageQuery = this.isPageQueryActive();
 
     if (activePageQuery) {
-      this.dataSource.paginator.pageIndex = activePageQuery[paramName.PAGE_INDEX];
-      this.dataSource.paginator.pageSize = activePageQuery[paramName.PAGE_SIZE];
+      this.dataSource.paginator.pageIndex = activePageQuery.page_index;
+      this.dataSource.paginator.pageSize = activePageQuery.page_size;
     }
 
     // Activating initial Sort
     const activeSortQuery = this.isSortQueryActive();
     if (activeSortQuery) {
-      let sortDirection = activeSortQuery[paramName.SORT_DIRECTION] ? activeSortQuery[paramName.SORT_ACTIVE] : null;
+      let sortDirection = activeSortQuery.sort_direction ? activeSortQuery.sort_active : null;
       const sortActiveColumn = activeSortQuery ? sortDirection : this.matSortActive;
       const sortable: MatSortable = {
         id: sortActiveColumn,
-        start: activeSortQuery ? (activeSortQuery[paramName.SORT_DIRECTION] || null) : this.matSortDirection,
+        start: activeSortQuery ? (activeSortQuery.sort_direction || null) : this.matSortDirection,
         disableClear: true
       };
       this.dataSource.sort.sort(sortable);
@@ -65,26 +64,26 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
 
   }
 
-  private isSortQueryActive(): { [paramName.SORT_ACTIVE]: string, [paramName.SORT_DIRECTION]: 'asc' | 'desc' } {
+  private isSortQueryActive(): { sort_active: string, sort_direction: 'asc' | 'desc' } {
 
     const queryParams = this._activatedRoute.snapshot.queryParams;
 
-    if (queryParams.hasOwnProperty(paramName.SORT_ACTIVE) || queryParams.hasOwnProperty(paramName.SORT_DIRECTION)) {
+    if (queryParams.hasOwnProperty('sort_active') || queryParams.hasOwnProperty('sort_direction')) {
       return {
-        [paramName.SORT_ACTIVE]: queryParams[paramName.SORT_ACTIVE],
-        [paramName.SORT_DIRECTION]: queryParams[paramName.SORT_DIRECTION]
+        sort_active: queryParams.sort_active,
+        sort_direction: queryParams.sort_direction
       };
     }
   }
 
-  private isPageQueryActive(): { [paramName.PAGE_SIZE]: number, [paramName.PAGE_INDEX]: number } {
+  private isPageQueryActive(): { page_size: number, page_index: number } {
 
     const queryParams = this._activatedRoute.snapshot.queryParams;
 
-    if (queryParams.hasOwnProperty(paramName.PAGE_SIZE) || queryParams.hasOwnProperty(paramName.PAGE_INDEX)) {
+    if (queryParams.hasOwnProperty('page_size') || queryParams.hasOwnProperty('page_index')) {
       return {
-        [paramName.PAGE_SIZE]: queryParams[paramName.PAGE_SIZE],
-        [paramName.PAGE_INDEX]: queryParams[paramName.PAGE_INDEX]
+        page_size: queryParams.page_size,
+        page_index: queryParams.page_index
       };
     }
   }
@@ -106,8 +105,8 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   private _applySortChangesToUrlQueryParams(sortChange: Sort): void {
 
     const sortingAndPaginationQueryParams = {
-      [paramName.SORT_ACTIVE]: sortChange.active,
-      [paramName.SORT_DIRECTION]: sortChange.direction,
+      sort_active: sortChange.active,
+      sort_direction: sortChange.direction,
     };
 
     this._router.navigate([], {queryParams: sortingAndPaginationQueryParams, queryParamsHandling: 'merge'}).then();
@@ -116,8 +115,8 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   private _applyPageStateChangesToUrlQueryParams(pageChange: PageEvent): void {
 
     const sortingAndPaginationQueryParams = {
-      [paramName.PAGE_SIZE]: pageChange.pageSize,
-      [paramName.PAGE_INDEX]: pageChange.pageIndex,
+      page_size: pageChange.pageSize,
+      page_index: pageChange.pageIndex,
     };
 
     this._router.navigate([], {queryParams: sortingAndPaginationQueryParams, queryParamsHandling: 'merge'}).then();
@@ -128,7 +127,7 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
     const titleCheckingInterval$ = interval(500);
 
     return new Promise((resolve) => {
-      this._dataSourceChecker$ = titleCheckingInterval$.subscribe(() => {
+      this._dataSourceChecker$ = titleCheckingInterval$.subscribe(val => {
         if (this.dataSource?.sort && this.dataSource?.paginator) {
           this._dataSourceChecker$.unsubscribe();
           return resolve();
@@ -139,6 +138,7 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // this.unsubscribeAll$.next(null);
     this.unsubscribeAll$.complete();
   }
 

@@ -8,8 +8,8 @@ export class PopConfirmModel {
 
   constructor(content: string, actions?: PopConfirmAction[]) {
     let actionsDefault = [
-      new PopConfirmAction(PopConfirmConstant.TEXT_CANCEL, PopConfirmConstant.COLOR_PRIMARY),
-      new PopConfirmAction(PopConfirmConstant.TEXT_OK, PopConfirmConstant.COLOR_WARN)
+      new PopConfirmAction(PopConfirmConstant.TEXT_NO, PopConfirmConstant.COLOR_PRIMARY),
+      new PopConfirmAction(PopConfirmConstant.TEXT_SURE, PopConfirmConstant.COLOR_WARN)
     ];
     this.content = content;
     this.actions = actions ? actions : actionsDefault;

@@ -6,11 +6,6 @@
       (click)="onEditUser()"
     > Create user
     </button>
-    <div>
-      <div>
-        <app-date-range-picker></app-date-range-picker>
-      </div>
-    </div>
   </div>
   <div class="card-body table-responsive">
     <table class="table align-middle mb-0 bg-white userManagement"
@@ -25,13 +20,13 @@
         <th class="filter-container">
           Role
           <app-checkbox-filter
-            #roleFilter [dataSource]="dataSourceRoleFilter" [paramName]="paramUser.ROLE"
+            #roleFilter [dataSource]="dataSourceRoleFilter" [paramName]="'role'"
           ></app-checkbox-filter>
         </th>
         <th>Status
           <app-radio-box-filter
             #activeFilter [dataSource]="dataSourceActiveFilter"
-            [paramName]="paramUser.ACTIVE">
+            [paramName]="'active'">
           </app-radio-box-filter>
         </th>
         <th mat-sort-header="modifiedAt">Modified Date</th>
@@ -61,16 +56,16 @@
         </td>
         <td>
           <span class="badge badge-warning rounded-pill d-inline"
-            *ngIf="user.role.toLowerCase().includes(AD.toLowerCase())"
-          >{{AD}}
+            *ngIf="user.role.toLowerCase().includes(ADMIN.toLowerCase())"
+          >{{ADMIN}}
           </span>
           <span class="badge badge-success rounded-pill d-inline"
-            *ngIf="user.role.toLowerCase().includes(MOD.toLowerCase())"
-          >{{MOD}}
+            *ngIf="user.role.toLowerCase().includes(MODERATOR.toLowerCase())"
+          >{{MODERATOR}}
           </span>
           <span class="badge badge-primary rounded-pill d-inline"
-            *ngIf="user.role.toLowerCase().includes(MEM.toLowerCase())"
-          >{{MEM}}
+            *ngIf="user.role.toLowerCase().includes(MEMBER.toLowerCase())"
+          >{{MEMBER}}
           </span>
         </td>
         <td style="width: 205px;">
