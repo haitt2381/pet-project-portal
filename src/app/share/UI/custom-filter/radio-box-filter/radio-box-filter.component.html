@@ -1,6 +1,6 @@
 <span class="filter-text dropdown" mdbDropdown [closeOnItemClick]="false" #dropdownFilter>
   <span mdbDropdownToggle class="btn-rounded">
-    <i class="fa-solid fa-filter fa-xs filter-icon" [ngClass]="{'text-primary': this.params !== undefined}"></i>
+    <i class="fa-solid fa-filter fa-xs filter-icon" [ngClass]="{'text-primary': this.queryStorage[this.paramName] !== undefined}"></i>
   </span>
   <ul mdbDropdownMenu class="dropdown-menu filter-menu">
     <label class="dropdown-item filter-item" [for]="'filter'+i" *ngFor="let data of dataSource, let i = index">
@@ -8,8 +8,8 @@
         <input mdbRadio class="form-check-input" type="radio" name="filter-radio"
                [id]="'filter'+i"
                [value]="data.value"
-               [checked]="params?.includes(data.value)"
-               (click) ="handleRadioBoxChange($event, data.value)"
+               [checked]="queryStorage[this.paramName]?.includes(data.value)"
+               (click) ="onClickRadioBox($event, data.value)"
         />
         <label class="form-check-label" [for]="'filter'+i"
                [innerHTML]="this.sanitizer.bypassSecurityTrustHtml(data.text)"

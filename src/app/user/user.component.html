@@ -3,15 +3,14 @@
 <div class="card">
   <div class="card-header d-flex justify-content-between">
     <button type="button" mat-raised-button color="primary"
-      (click)="onEditUser()"
+            (click)="onEditUser()"
     > Create user
     </button>
   </div>
   <div class="card-body table-responsive">
     <table class="table align-middle mb-0 bg-white userManagement"
-      aria-label="userManagement"
-      matSort matSortActive="modifiedAt" matSortDirection="desc"
-      [dataSource]="dataSource" appNgMatTableQueryReflector
+           aria-label="userManagement" matSort
+           [dataSource]="dataSource" appNgMatTableQueryReflector
     >
       <thead class="bg-light">
       <tr>
@@ -20,13 +19,12 @@
         <th class="filter-container">
           Role
           <app-checkbox-filter
-            #roleFilter [dataSource]="dataSourceRoleFilter" [paramName]="'role'"
+            [dataSource]="dataSourceRoleFilter" [paramName]="'role'" (toggleCheckbox)="loadUsers()"
           ></app-checkbox-filter>
         </th>
         <th>Status
           <app-radio-box-filter
-            #activeFilter [dataSource]="dataSourceActiveFilter"
-            [paramName]="'active'">
+            [dataSource]="dataSourceActiveFilter" [paramName]="'active'" (clickRadioBox)="loadUsers()">
           </app-radio-box-filter>
         </th>
         <th mat-sort-header="modifiedAt">Modified Date</th>
@@ -56,26 +54,26 @@
         </td>
         <td>
           <span class="badge badge-warning rounded-pill d-inline"
-            *ngIf="user.role.toLowerCase().includes(ADMIN.toLowerCase())"
+                *ngIf="user.role.toLowerCase().includes(ADMIN.toLowerCase())"
           >{{ADMIN}}
           </span>
           <span class="badge badge-success rounded-pill d-inline"
-            *ngIf="user.role.toLowerCase().includes(MODERATOR.toLowerCase())"
+                *ngIf="user.role.toLowerCase().includes(MODERATOR.toLowerCase())"
           >{{MODERATOR}}
           </span>
           <span class="badge badge-primary rounded-pill d-inline"
-            *ngIf="user.role.toLowerCase().includes(MEMBER.toLowerCase())"
+                *ngIf="user.role.toLowerCase().includes(MEMBER.toLowerCase())"
           >{{MEMBER}}
           </span>
         </td>
         <td style="width: 205px;">
           <mat-slide-toggle #matSlideToggle
-            color="primary"
-            matTooltipPosition="right"
-            [matTooltip]="isRecycleMode ? '' : (matSlideToggle.checked ? 'Deactivate User' : 'Active User')"
-            [checked]="user.isActive"
-            [disabled]="isRecycleMode"
-            (change)="onChangeUserStatus(user.id, user.isActive)"
+                            color="primary"
+                            matTooltipPosition="right"
+                            [matTooltip]="isRecycleMode ? '' : (matSlideToggle.checked ? 'Deactivate User' : 'Active User')"
+                            [checked]="user.isActive"
+                            [disabled]="isRecycleMode"
+                            (change)="onChangeUserStatus(user.id, user.isActive)"
           ></mat-slide-toggle>
         </td>
         <td>
@@ -112,7 +110,7 @@
           </div>
         </td>
       </tr>
-      <tr  *ngIf="users === undefined || users.length === 0">
+      <tr *ngIf="users === undefined || users.length === 0">
         <td colspan="6">
           <app-empty-state></app-empty-state>
         </td>
@@ -127,9 +125,9 @@
     </div>
     <div class="d-flex justify-content-between">
       <a class="btn btn-tertiary mt-2" role="button"
-        matTooltipPosition="above"
-        [matTooltip]="isRecycleMode ? 'User management' : 'Recycle user'"
-        (click)="onToggleRecycleMode()"
+         matTooltipPosition="above"
+         [matTooltip]="isRecycleMode ? 'User management' : 'Recycle user'"
+         (click)="onToggleRecycleMode()"
       >
         <i *ngIf="isRecycleMode" class="fa-solid fa-users-line fa-xl"></i>
         <i *ngIf="!isRecycleMode" class="fa-solid fa-recycle fa-xl"></i>

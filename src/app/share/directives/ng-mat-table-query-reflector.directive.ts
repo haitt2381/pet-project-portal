@@ -4,6 +4,8 @@ import {interval, Subject, Subscription, takeUntil} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatTableDataSource} from "@angular/material/table";
 import {PageEvent} from "@angular/material/paginator";
+import {QueryParamsUser} from "../model/common/query-params-user";
+import {getQueryStorage} from "../services/Utils.service";
 
 @Directive({
   selector: '[appNgMatTableQueryReflector]'
@@ -15,7 +17,7 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   @Input() matSortDirection: 'asc' | 'desc';
   @Input() dataSource: MatTableDataSource<any>;
   private _dataSourceChecker$: Subscription;
-
+  private _queryStorage: QueryParamsUser;
   constructor(
     private _router: Router,
     private _activatedRoute: ActivatedRoute
@@ -29,22 +31,23 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   }
 
   private _initialSetup(): void {
+    this._queryStorage = getQueryStorage();
 
     const activePageQuery = this.isPageQueryActive();
 
     if (activePageQuery) {
-      this.dataSource.paginator.pageIndex = activePageQuery.page_index;
-      this.dataSource.paginator.pageSize = activePageQuery.page_size;
+      this.dataSource.paginator.pageIndex = activePageQuery.pageIndex;
+      this.dataSource.paginator.pageSize = activePageQuery.pageSize;
     }
 
     // Activating initial Sort
     const activeSortQuery = this.isSortQueryActive();
     if (activeSortQuery) {
-      let sortDirection = activeSortQuery.sort_direction ? activeSortQuery.sort_active : null;
+      let sortDirection = activeSortQuery.sortDirection ? activeSortQuery.sortActive : null;
       const sortActiveColumn = activeSortQuery ? sortDirection : this.matSortActive;
       const sortable: MatSortable = {
         id: sortActiveColumn,
-        start: activeSortQuery ? (activeSortQuery.sort_direction || null) : this.matSortDirection,
+        start: activeSortQuery ? (activeSortQuery.sortDirection || null) : this.matSortDirection,
         disableClear: true
       };
       this.dataSource.sort.sort(sortable);
@@ -64,26 +67,27 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
 
   }
 
-  private isSortQueryActive(): { sort_active: string, sort_direction: 'asc' | 'desc' } {
+  private isSortQueryActive(): { sortActive: string, sortDirection: 'asc' | 'desc'} {
 
-    const queryParams = this._activatedRoute.snapshot.queryParams;
-
-    if (queryParams.hasOwnProperty('sort_active') || queryParams.hasOwnProperty('sort_direction')) {
+    if (this._queryStorage.hasOwnProperty('sortActive') || this._queryStorage.hasOwnProperty('sortDirection')) {
       return {
-        sort_active: queryParams.sort_active,
-        sort_direction: queryParams.sort_direction
+        sortActive: this._queryStorage.sortActive,
+        sortDirection: this._queryStorage.sortDirection
+      };
+    } else {
+      return {
+        sortActive: 'modifiedAt',
+        sortDirection: 'desc'
       };
     }
   }
 
-  private isPageQueryActive(): { page_size: number, page_index: number } {
+  private isPageQueryActive(): { pageSize: number, pageIndex: number } {
 
-    const queryParams = this._activatedRoute.snapshot.queryParams;
-
-    if (queryParams.hasOwnProperty('page_size') || queryParams.hasOwnProperty('page_index')) {
+    if (this._queryStorage.hasOwnProperty('pageSize') || this._queryStorage.hasOwnProperty('pageIndex')) {
       return {
-        page_size: queryParams.page_size,
-        page_index: queryParams.page_index
+        pageSize: this._queryStorage.pageSize,
+        pageIndex: this._queryStorage.pageIndex
       };
     }
   }
@@ -103,23 +107,15 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   }
 
   private _applySortChangesToUrlQueryParams(sortChange: Sort): void {
-
-    const sortingAndPaginationQueryParams = {
-      sort_active: sortChange.active,
-      sort_direction: sortChange.direction,
-    };
-
-    this._router.navigate([], {queryParams: sortingAndPaginationQueryParams, queryParamsHandling: 'merge'}).then();
+    this._queryStorage.sortActive = sortChange.active;
+    this._queryStorage.sortDirection = sortChange.direction;
+    localStorage.setItem("queryStorage", JSON.stringify(this._queryStorage));
   }
 
   private _applyPageStateChangesToUrlQueryParams(pageChange: PageEvent): void {
-
-    const sortingAndPaginationQueryParams = {
-      page_size: pageChange.pageSize,
-      page_index: pageChange.pageIndex,
-    };
-
-    this._router.navigate([], {queryParams: sortingAndPaginationQueryParams, queryParamsHandling: 'merge'}).then();
+    this._queryStorage.pageSize = pageChange.pageSize;
+    this._queryStorage.pageIndex = pageChange.pageIndex;
+    localStorage.setItem("queryStorage", JSON.stringify(this._queryStorage));
   }
 
   private waitForDatasourceToLoad(): Promise<void> {

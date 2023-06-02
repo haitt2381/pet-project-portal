@@ -11,18 +11,17 @@ import {catchError, map, merge, startWith, switchMap, throwError} from "rxjs";
 import {GetUsersRequest} from "../share/model/user/get-users-request.model";
 import {RequestInfo, SortInfo} from "../share/model/common/request-info.model";
 import {MatTableDataSource} from "@angular/material/table";
-import {CheckboxFilterComponent} from "../share/UI/custom-filter/checkbox-filter.component";
 import {HeaderTitleService} from "../header/header-title.service";
-import {QueryParams} from "../share/model/common/query-params.model";
 import {dataSourceActiveFilter, dataSourceRoleFilter} from "../share/constant/data-source-filter.constant";
 import {Role} from "../share/constant/role.constant";
-import {RadioBoxFilterComponent} from "../share/UI/custom-filter/radio-box-filter.component";
 import {IdResponse} from "../share/model/common/id-response.model";
 import {Alert} from "../share/constant/alert.constant";
 import {MatDialog} from "@angular/material/dialog";
 import {PopConfirmComponent} from "../share/UI/pop-comfirm/pop-confirm/pop-confirm.component";
 import {PopConfirmModel} from "../share/model/UI/pop-confirm.model";
 import {PopConfirmConstant} from "../share/constant/pop-confirm.constant";
+import {QueryParamsUser} from "../share/model/common/query-params-user";
+import {getQueryStorage} from "../share/services/Utils.service";
 
 @Component({
   selector: 'app-user',
@@ -40,13 +39,11 @@ export class UserComponent implements OnInit, AfterViewInit {
   responseInfo: ResponseInfo;
   isLoading: boolean = false;
   dataSource: MatTableDataSource<User>;
-  queryParams: QueryParams;
   isRecycleMode: boolean = false;
+  queryStorage: QueryParamsUser;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild("roleFilter", {static: true}) roleFilter: CheckboxFilterComponent;
-  @ViewChild("activeFilter", {static: true}) activeFilter: RadioBoxFilterComponent;
 
   constructor(
     private _router: Router,
@@ -61,20 +58,16 @@ export class UserComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.queryStorage = getQueryStorage();
     this.dataSource = new MatTableDataSource<User>(this.users);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this._route.queryParams.subscribe((params: QueryParams) => {
-      this.queryParams = params;
-    });
   }
 
   ngAfterViewInit(): void {
     merge(
       this.sort.sortChange,
       this.paginator.page,
-      this.roleFilter.dropdownFilter.dropdownHidden,
-      this.activeFilter.dropdownFilter.dropdownHidden,
     ).pipe(
       startWith({}),
       switchMap(() => {
@@ -101,11 +94,12 @@ export class UserComponent implements OnInit, AfterViewInit {
   }
 
   private buildGetUserRequest() {
+    this.queryStorage = getQueryStorage();
     let sortInfo = new SortInfo(this.sort.direction, this.sort.active);
     let requestInfo = new RequestInfo(this.paginator.pageIndex, this.paginator.pageSize, sortInfo);
     let getUsersRequest = new GetUsersRequest(requestInfo);
-    getUsersRequest.setRole = this.queryParams.role;
-    getUsersRequest.isActive = this.queryParams.active;
+    getUsersRequest.setRole = this.queryStorage.role;
+    getUsersRequest.isActive = this.queryStorage.active;
     getUsersRequest.isExcludeCurrentUserLogged = true;
     getUsersRequest.isDeleted = this.isRecycleMode;
     return getUsersRequest;
@@ -179,7 +173,7 @@ export class UserComponent implements OnInit, AfterViewInit {
   onToggleRecycleMode() {
     this.isRecycleMode = !this.isRecycleMode;
     this.loadUsers();
-    let titlePage = this.isRecycleMode? "USER RECYCLE BIN" : "USER MANAGEMENT";
+    let titlePage = this.isRecycleMode ? "USER RECYCLE BIN" : "USER MANAGEMENT";
     this._headerService.setTitle(titlePage);
   }
 
@@ -212,7 +206,7 @@ export class UserComponent implements OnInit, AfterViewInit {
     this.isLoading = true;
     this._userService.restoreUser(id).subscribe({
       next: (resData: IdResponse) => {
-        if(resData.id) {
+        if (resData.id) {
           this.loadUsers();
         }
         this._alertService.success(Alert.USER_RESTORE_SUCCESS);
