@@ -31,7 +31,7 @@ import {MatListModule} from "@angular/material/list";
 import {MatIconModule} from "@angular/material/icon";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatMenuModule} from "@angular/material/menu";
-import {MatLineModule, MatRippleModule} from "@angular/material/core";
+import {MatLineModule, MatNativeDateModule, MatRippleModule} from "@angular/material/core";
 import {MatCardModule} from "@angular/material/card";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
@@ -55,10 +55,15 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { NgMatTableQueryReflectorDirective } from './share/directives/ng-mat-table-query-reflector.directive';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSelectModule} from "@angular/material/select";
-import { CheckboxFilterComponent } from './share/UI/custom-filter/checkbox-filter.component';
-import {RadioBoxFilterComponent} from "./share/UI/custom-filter/radio-box-filter.component";
+import { CheckboxFilterComponent } from './share/UI/custom-filter/checkbox-filter/checkbox-filter.component';
+import {RadioBoxFilterComponent} from "./share/UI/custom-filter/radio-box-filter/radio-box-filter.component";
 import {EmptyStateComponent} from "./share/UI/empty-state/empty-state.component";
 import { PopConfirmComponent } from './share/UI/pop-comfirm/pop-confirm/pop-confirm.component';
+import {DateRangePickerComponent} from "./share/UI/custom-filter/date-range-picker/date-range-picker.component";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {SearchFilterComponent} from "./share/UI/custom-filter/search-filter/search-filter.component";
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -74,6 +79,8 @@ import { PopConfirmComponent } from './share/UI/pop-comfirm/pop-confirm/pop-conf
     RadioBoxFilterComponent,
     EmptyStateComponent,
     PopConfirmComponent,
+    DateRangePickerComponent,
+    SearchFilterComponent,
   ],
   imports: [
     BrowserModule,
@@ -122,6 +129,10 @@ import { PopConfirmComponent } from './share/UI/pop-comfirm/pop-confirm/pop-conf
     MatSlideToggleModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatAutocompleteModule,
+    NgOptimizedImage,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}

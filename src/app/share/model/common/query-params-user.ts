@@ -1,5 +1,3 @@
-import {SortDirection} from "@angular/material/sort";
-
 export interface QueryParamsUser {
   pageSize: number
   pageIndex: number
@@ -9,4 +7,5 @@ export interface QueryParamsUser {
   active: boolean
   fromDate: Date;
   toDate: Date;
+  keyword: string;
 }

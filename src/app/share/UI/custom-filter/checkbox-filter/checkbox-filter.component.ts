@@ -15,7 +15,9 @@ export class CheckboxFilterComponent implements OnInit{
   @Input() dataSource: DataSourceFilter[];
   @Input() paramName: string;
   @Output() toggleCheckbox = new EventEmitter();
+
   queryStorage: QueryParamsUser;
+
 
   constructor(
     public sanitizer: DomSanitizer

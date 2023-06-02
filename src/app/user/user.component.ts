@@ -104,6 +104,7 @@ export class UserComponent implements OnInit, AfterViewInit {
     getUsersRequest.isDeleted = this.isRecycleMode;
     getUsersRequest.fromDate = this.queryStorage.fromDate;
     getUsersRequest.toDate = this.queryStorage.toDate;
+    getUsersRequest.keyword = this.queryStorage.keyword;
     return getUsersRequest;
   }
 
@@ -136,8 +137,8 @@ export class UserComponent implements OnInit, AfterViewInit {
       data: new PopConfirmModel("Are you sure to delete this user"),
     });
     dialogRef.afterClosed().subscribe(action => {
-      switch (action) {
-        case PopConfirmConstant.TEXT_SURE: {
+      if (action === PopConfirmConstant.TEXT_OK) {
+        {
           this.isLoading = true;
           this._userService.deleteUser(id).subscribe({
             next: (resData: IdResponse) => {
@@ -184,8 +185,8 @@ export class UserComponent implements OnInit, AfterViewInit {
       data: new PopConfirmModel("Are you sure you want to completely delete this user? If so, you cannot undo this action."),
     });
     dialogRef.afterClosed().subscribe(action => {
-      switch (action) {
-        case PopConfirmConstant.TEXT_SURE: {
+      if (action === PopConfirmConstant.TEXT_OK) {
+        {
           this.isLoading = true;
           this._userService.hardDeleteUser(id).subscribe({
             next: (resData: IdResponse) => {
@@ -218,5 +219,9 @@ export class UserComponent implements OnInit, AfterViewInit {
         this._alertService.handleErrors(err);
       }
     });
+  }
+
+  onRemoveAllFilter() {
+
   }
 }
