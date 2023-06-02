@@ -102,6 +102,8 @@ export class UserComponent implements OnInit, AfterViewInit {
     getUsersRequest.isActive = this.queryStorage.active;
     getUsersRequest.isExcludeCurrentUserLogged = true;
     getUsersRequest.isDeleted = this.isRecycleMode;
+    getUsersRequest.fromDate = this.queryStorage.fromDate;
+    getUsersRequest.toDate = this.queryStorage.toDate;
     return getUsersRequest;
   }
 

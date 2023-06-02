@@ -8,9 +8,10 @@ export class GetUsersRequest {
   isActive?: boolean;
   isExcludeCurrentUserLogged?: boolean;
   isDeleted?: boolean;
+  fromDate?: Date;
+  toDate?: Date;
 
   constructor(requestInfo?: RequestInfo) {
-    this.keyword = "";
     this.requestInfo = requestInfo ? requestInfo : new RequestInfo(null, null, null);
   }
 
