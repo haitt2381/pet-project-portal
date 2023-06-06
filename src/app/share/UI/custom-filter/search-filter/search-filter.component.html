@@ -1,9 +1,11 @@
 <mdb-form-control class="d-flex">
-  <input mdbInput type="text"  #inputSearch
+  <input mdbInput type="text" #inputSearch
          placeholder="Search"
          [formControl]="inputControl"
          class="form-control"
   >
-  <i *ngIf="!this.isSearchFilterActive" class="fa-solid fa-magnifying-glass fa-lg pt-3 pe-2 cursor-pointer" (click)="onKeywordChange()"></i>
-  <i *ngIf="this.isSearchFilterActive"  class="fa-solid fa-xmark fa-xl pt-3 pe-2 cursor-pointer text-primary" (click)="onRemoveSearch()"></i>
+  <i *ngIf="!this.queryStorage[this.paramName]" class="fa-solid fa-magnifying-glass fa-lg pt-3 pe-2 cursor-pointer"
+     (click)="onKeywordChange()"></i>
+  <i *ngIf="this.queryStorage[this.paramName]" class="fa-solid fa-xmark fa-xl pt-3 pe-2 cursor-pointer text-primary"
+     (click)="onRemoveSearch()"></i>
 </mdb-form-control>

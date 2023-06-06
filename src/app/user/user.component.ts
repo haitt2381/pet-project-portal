@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {User} from "../share/model/user/user.model";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "./user.service";
@@ -6,8 +6,7 @@ import {AlertService} from "../share/services/alert.service";
 import {GetUsersResponse} from "../share/model/user/get-users-response.model";
 import {ResponseInfo} from "../share/model/common/response-info.model";
 import {MatPaginator} from "@angular/material/paginator";
-import {MatSort} from "@angular/material/sort";
-import {catchError, map, merge, startWith, switchMap, throwError} from "rxjs";
+import {MatSort, MatSortable} from "@angular/material/sort";
 import {GetUsersRequest} from "../share/model/user/get-users-request.model";
 import {RequestInfo, SortInfo} from "../share/model/common/request-info.model";
 import {MatTableDataSource} from "@angular/material/table";
@@ -21,14 +20,20 @@ import {PopConfirmComponent} from "../share/UI/pop-comfirm/pop-confirm/pop-confi
 import {PopConfirmModel} from "../share/model/UI/pop-confirm.model";
 import {PopConfirmConstant} from "../share/constant/pop-confirm.constant";
 import {QueryParamsUser} from "../share/model/common/query-params-user";
-import {getQueryStorage} from "../share/services/Utils.service";
+import {QueryStorageService} from "../share/services/query-storage.service";
+import {
+  APP_DEFAULT_PAGE_INDEX,
+  APP_DEFAULT_PAGE_SIZE,
+  APP_DEFAULT_SORT_ACTIVE,
+  APP_DEFAULT_SORT_DIRECTION
+} from "../app.constant";
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
 })
-export class UserComponent implements OnInit, AfterViewInit {
+export class UserComponent implements OnInit {
   protected readonly ADMIN = Role.ADMIN;
   protected readonly MODERATOR = Role.MODERATOR;
   protected readonly MEMBER = Role.MEMBER;
@@ -40,7 +45,9 @@ export class UserComponent implements OnInit, AfterViewInit {
   isLoading: boolean = false;
   dataSource: MatTableDataSource<User>;
   isRecycleMode: boolean = false;
+  isRemoveAllFilterDisable = false
   queryStorage: QueryParamsUser;
+  beforePayloadUsers: string;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -53,58 +60,38 @@ export class UserComponent implements OnInit, AfterViewInit {
     private _headerService: HeaderTitleService,
     private _cd: ChangeDetectorRef,
     private _dialog: MatDialog,
+    protected _query: QueryStorageService,
   ) {
     _headerService.setTitle("USER MANAGEMENT")
   }
 
   ngOnInit() {
-    this.queryStorage = getQueryStorage();
     this.dataSource = new MatTableDataSource<User>(this.users);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-  }
-
-  ngAfterViewInit(): void {
-    merge(
-      this.sort.sortChange,
-      this.paginator.page,
-    ).pipe(
-      startWith({}),
-      switchMap(() => {
-        this.isLoading = true;
-        this._cd.detectChanges();
-        let getUsersRequest = this.buildGetUserRequest();
-        return this._userService.getUsers(getUsersRequest)
-          .pipe(catchError((err) => throwError(() => {
-              this._alertService.handleErrors(err)
-            }
-          )));
-      }),
-      map(data => {
-        return data;
-      }),
-    ).subscribe({
-      next: (resData: GetUsersResponse) => {
-        this.users = resData.data;
-        this.responseInfo = resData.responseInfo;
-        this.isLoading = false;
-        this._cd.detectChanges();
-      },
-    });
+    if (Object.keys(this._query.getItem).length === 0) {
+      this._query.initData();
+    }
+    this._query.item.subscribe(() => {
+      this.queryStorage = this._query.getItem;
+      this.isRemoveAllFilterDisable = Object.keys(this.queryStorage).length === 4
+        && ((this.queryStorage.pageSize === APP_DEFAULT_PAGE_SIZE && this.queryStorage.pageIndex === APP_DEFAULT_PAGE_INDEX)
+          && (this.queryStorage.sortActive === APP_DEFAULT_SORT_ACTIVE && this.queryStorage.sortDirection === APP_DEFAULT_SORT_DIRECTION))
+      this.loadUsers();
+    })
   }
 
   private buildGetUserRequest() {
-    this.queryStorage = getQueryStorage();
-    let sortInfo = new SortInfo(this.sort.direction, this.sort.active);
-    let requestInfo = new RequestInfo(this.paginator.pageIndex, this.paginator.pageSize, sortInfo);
+    let sortInfo = new SortInfo(this.queryStorage.sortDirection, this.queryStorage.sortActive);
+    let requestInfo = new RequestInfo(this.queryStorage.pageIndex, this.queryStorage.pageSize, sortInfo);
     let getUsersRequest = new GetUsersRequest(requestInfo);
-    getUsersRequest.setRole = this.queryStorage.role;
-    getUsersRequest.isActive = this.queryStorage.active;
+    getUsersRequest.setRole = this.queryStorage?.role;
+    getUsersRequest.isActive = this.queryStorage?.active;
     getUsersRequest.isExcludeCurrentUserLogged = true;
     getUsersRequest.isDeleted = this.isRecycleMode;
-    getUsersRequest.fromDate = this.queryStorage.fromDate;
-    getUsersRequest.toDate = this.queryStorage.toDate;
-    getUsersRequest.keyword = this.queryStorage.keyword;
+    getUsersRequest.fromDate = this.queryStorage?.fromDate;
+    getUsersRequest.toDate = this.queryStorage?.toDate;
+    getUsersRequest.keyword = this.queryStorage?.keyword;
     return getUsersRequest;
   }
 
@@ -158,19 +145,25 @@ export class UserComponent implements OnInit, AfterViewInit {
   }
 
   loadUsers() {
-    this._userService.getUsers(this.buildGetUserRequest()).subscribe({
-      next: (resData: GetUsersResponse) => {
-        this.users = resData.data;
-        this.responseInfo = resData.responseInfo;
-        this.isLoading = false;
-        this._cd.detectChanges();
-      },
-      error: (err) => {
-        this.isLoading = false;
-        this._alertService.handleErrors(err);
-        this._cd.detectChanges();
-      }
-    })
+    let getUsersRequest = this.buildGetUserRequest();
+    console.log("call load user")
+    if (this.beforePayloadUsers !== JSON.stringify(getUsersRequest)) {
+      this.beforePayloadUsers = JSON.stringify(getUsersRequest);
+      this.isLoading = true;
+      this._userService.getUsers(getUsersRequest).subscribe({
+        next: (resData: GetUsersResponse) => {
+          this.users = resData.data;
+          this.responseInfo = resData.responseInfo;
+          this.isLoading = false;
+          this._cd.detectChanges();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this._alertService.handleErrors(err);
+          this._cd.detectChanges();
+        }
+      })
+    }
   }
 
   onToggleRecycleMode() {
@@ -222,6 +215,20 @@ export class UserComponent implements OnInit, AfterViewInit {
   }
 
   onRemoveAllFilter() {
+    if (this.sort.active !== APP_DEFAULT_SORT_ACTIVE || this.sort.direction !== APP_DEFAULT_SORT_DIRECTION) {
+      const sortable: MatSortable = {
+        id: APP_DEFAULT_SORT_ACTIVE,
+        start: APP_DEFAULT_SORT_DIRECTION,
+        disableClear: true
+      };
+      this.sort.sort(sortable);
+    }
 
+    if (this.paginator.pageSize !== APP_DEFAULT_PAGE_SIZE || this.paginator.pageIndex !== APP_DEFAULT_PAGE_INDEX) {
+      this.paginator._changePageSize(APP_DEFAULT_PAGE_SIZE);
+      this.paginator.firstPage();
+    }
+
+    this._query.removeItem();
   }
 }

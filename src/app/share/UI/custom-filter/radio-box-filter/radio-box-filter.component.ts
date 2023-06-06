@@ -1,8 +1,8 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
 import {DataSourceFilter} from "../../../model/common/data-source-filter.model";
 import {QueryParamsUser} from "../../../model/common/query-params-user";
-import {getQueryStorage, setQueryStorage} from "../../../services/Utils.service";
+import {QueryStorageService} from "../../../services/query-storage.service";
 
 @Component({
   selector: 'app-radio-box-filter',
@@ -13,29 +13,29 @@ export class RadioBoxFilterComponent implements OnInit {
 
   @Input() dataSource: DataSourceFilter[];
   @Input() paramName: string;
-  @Output() clickRadioBox = new EventEmitter();
   queryStorage: QueryParamsUser;
 
   constructor(
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    private _queryService: QueryStorageService,
   ) {
   }
 
   ngOnInit() {
-    this.queryStorage = getQueryStorage();
+    this._queryService.item.subscribe(() => {
+      this.queryStorage = this._queryService.getItem;
+    })
   }
 
   onClickRadioBox($event, value: string) {
-    this.queryStorage = getQueryStorage();
-
-    if (this.queryStorage[this.paramName] && this.queryStorage[this.paramName].includes(value)) {
+    let isHasItem = !!this.queryStorage[this.paramName];
+    if (isHasItem && this.queryStorage[this.paramName].includes(value)) {
       this.queryStorage[this.paramName] = undefined
       $event.target.checked = false;
     } else {
       this.queryStorage[this.paramName] = value;
     }
 
-    setQueryStorage(this.queryStorage);
-    this.clickRadioBox.emit();
+    this._queryService.setItem = this.queryStorage;
   }
 }

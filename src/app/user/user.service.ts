@@ -11,7 +11,7 @@ import {Alert} from "../share/constant/alert.constant";
 
 @Injectable({providedIn: 'root'})
 export class UserService {
-  public userUrl = AppConstant.SERVER_API_URL + '/user';
+  public userUrl = AppConstant.APP_SERVER_API_URL + '/user';
 
   constructor(
     private _http: HttpClient,

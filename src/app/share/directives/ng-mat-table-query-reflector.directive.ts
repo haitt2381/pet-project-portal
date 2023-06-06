@@ -4,8 +4,7 @@ import {interval, Subject, Subscription, takeUntil} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatTableDataSource} from "@angular/material/table";
 import {PageEvent} from "@angular/material/paginator";
-import {QueryParamsUser} from "../model/common/query-params-user";
-import {getQueryStorage} from "../services/Utils.service";
+import {QueryStorageService} from "../services/query-storage.service";
 
 @Directive({
   selector: '[appNgMatTableQueryReflector]'
@@ -17,10 +16,12 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   @Input() matSortDirection: 'asc' | 'desc';
   @Input() dataSource: MatTableDataSource<any>;
   private _dataSourceChecker$: Subscription;
-  private _queryStorage: QueryParamsUser;
+  private _queryStorage;
+
   constructor(
     private _router: Router,
-    private _activatedRoute: ActivatedRoute
+    private _activatedRoute: ActivatedRoute,
+    private _queryService: QueryStorageService,
   ) {
   }
 
@@ -31,7 +32,7 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   }
 
   private _initialSetup(): void {
-    this._queryStorage = getQueryStorage();
+    this._queryStorage = this._queryService.getItem;
 
     const activePageQuery = this.isPageQueryActive();
 
@@ -64,10 +65,9 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
         toState: 'active',
       });
     }
-
   }
 
-  private isSortQueryActive(): { sortActive: string, sortDirection: 'asc' | 'desc'} {
+  private isSortQueryActive(): { sortActive: string, sortDirection: 'asc' | 'desc' } {
 
     if (this._queryStorage.hasOwnProperty('sortActive') || this._queryStorage.hasOwnProperty('sortDirection')) {
       return {
@@ -107,15 +107,17 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   }
 
   private _applySortChangesToUrlQueryParams(sortChange: Sort): void {
+    this._queryStorage = this._queryService.getItem;
     this._queryStorage.sortActive = sortChange.active;
     this._queryStorage.sortDirection = sortChange.direction;
-    localStorage.setItem("queryStorage", JSON.stringify(this._queryStorage));
+    this._queryService.setItem = this._queryStorage;
   }
 
   private _applyPageStateChangesToUrlQueryParams(pageChange: PageEvent): void {
+    this._queryStorage = this._queryService.getItem;
     this._queryStorage.pageSize = pageChange.pageSize;
     this._queryStorage.pageIndex = pageChange.pageIndex;
-    localStorage.setItem("queryStorage", JSON.stringify(this._queryStorage));
+    this._queryService.setItem = this._queryStorage;
   }
 
   private waitForDatasourceToLoad(): Promise<void> {
@@ -123,7 +125,7 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
     const titleCheckingInterval$ = interval(500);
 
     return new Promise((resolve) => {
-      this._dataSourceChecker$ = titleCheckingInterval$.subscribe(val => {
+      this._dataSourceChecker$ = titleCheckingInterval$.subscribe(() => {
         if (this.dataSource?.sort && this.dataSource?.paginator) {
           this._dataSourceChecker$.unsubscribe();
           return resolve();
@@ -134,7 +136,6 @@ export class NgMatTableQueryReflectorDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // this.unsubscribeAll$.next(null);
     this.unsubscribeAll$.complete();
   }
 

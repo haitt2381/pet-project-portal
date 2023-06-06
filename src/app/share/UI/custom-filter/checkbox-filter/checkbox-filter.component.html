@@ -1,13 +1,13 @@
 <span class="filter-text dropdown" mdbDropdown [closeOnItemClick]="false">
   <span mdbDropdownToggle class="btn-rounded">
-    <i class="fa-solid fa-filter fa-xs filter-icon" [ngClass]="{'text-primary': this.queryStorage[this.paramName]?.length !== 0}"></i>
+    <i class="fa-solid fa-filter fa-xs filter-icon" [ngClass]="{'text-primary': this.queryStorage[this.paramName] && this.queryStorage[this.paramName]?.length !== 0}"></i>
   </span>
   <ul mdbDropdownMenu class="dropdown-menu filter-menu">
     <label class="dropdown-item filter-item" [for]="'filter'+i" *ngFor="let data of dataSource, let i = index">
       <div class="form-check">
         <input mdbCheckbox class="form-check-input" type="checkbox" [id]="'filter'+ i" name="test"
                [value]="data.value"
-               [checked]="this.queryStorage[this.paramName]?.includes(data.value)"
+               [checked]="this.queryStorage[this.paramName] &&  this.queryStorage[this.paramName]?.includes(data.value)"
                (checkboxChange)="onCheckboxChange($event)"
         />
         <label class="form-check-label" [for]="'filter'+i"

@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
 import {FormControl} from "@angular/forms";
-import {debounceTime, filter, fromEvent, tap} from "rxjs";
-import {getQueryStorage, setQueryStorage} from "../../../services/Utils.service";
+import {debounceTime, filter, fromEvent} from "rxjs";
+import {QueryStorageService} from "../../../services/query-storage.service";
 
 @Component({
   selector: 'app-search-filter',
@@ -15,10 +15,15 @@ export class SearchFilterComponent implements OnInit, AfterViewInit {
   queryStorage;
   isSearchFilterActive = false;
 
+  constructor(private _query: QueryStorageService,) {
+  }
+
   ngOnInit() {
-    this.queryStorage = getQueryStorage();
-    this.queryStorage[this.paramName] = this.queryStorage[this.paramName] ? this.queryStorage[this.paramName] : '';
-    this.inputControl = new FormControl(this.queryStorage[this.paramName]);
+    this._query.item.subscribe(() => {
+      this.queryStorage = this._query.getItem;
+      this.queryStorage[this.paramName] = this.queryStorage[this.paramName] ? this.queryStorage[this.paramName] : '';
+      this.inputControl = new FormControl(this.queryStorage[this.paramName]);
+    })
   }
 
   ngAfterViewInit() {
@@ -29,31 +34,31 @@ export class SearchFilterComponent implements OnInit, AfterViewInit {
       });
 
     fromEvent(this.inputSearchRef.nativeElement, 'input')
-      .pipe(debounceTime(1700))
+      .pipe(debounceTime(1000))
       .subscribe(() => {
         this.onKeywordChange();
       });
   }
 
   onKeywordChange() {
-    if(!this.inputControl.value || this.inputControl.value.isEmpty) {
-      this.isSearchFilterActive = false;
+    if (!this.inputControl.value || this.inputControl.value.isEmpty) {
+      // this.isSearchFilterActive = false;
+      this.queryStorage[this.paramName] = undefined;
+      this._query.setItem = this.queryStorage;
     }
-    if(this.inputControl.value === this.queryStorage[this.paramName]) return;
 
-    if(this.inputControl.value && !this.inputControl.value.isEmpty) {
-      this.isSearchFilterActive = true;
+    let isSameTextSearchBefore = this.inputControl.value === this.queryStorage[this.paramName];
+    if (!isSameTextSearchBefore && (this.inputControl.value && !this.inputControl.value.isEmpty)) {
+      // this.isSearchFilterActive = true;
+      this.queryStorage[this.paramName] = this.inputControl.value;
+      this._query.setItem = this.queryStorage;
     }
-    this.queryStorage[this.paramName] = this.inputControl.value;
-    setQueryStorage(this.queryStorage);
-    this.keywordChange.emit();
   }
 
   onRemoveSearch() {
     this.inputControl.reset();
-    this.queryStorage[this.paramName] = '';
-    setQueryStorage(this.queryStorage);
-    this.isSearchFilterActive = false;
-    this.keywordChange.emit();
+    this.queryStorage[this.paramName] = undefined;
+    // this.isSearchFilterActive = false;
+    this._query.setItem = this.queryStorage;
   }
 }

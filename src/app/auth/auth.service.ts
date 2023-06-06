@@ -11,7 +11,7 @@ import {UserLoginLocalStorage} from "../share/model/auth/user-login-local-storag
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  private _authUrl = `${AppConstant.SERVER_API_URL}/auth`;
+  private _authUrl = `${AppConstant.APP_SERVER_API_URL}/auth`;
   userLogged = new BehaviorSubject<UserLogin>(null);
 
   private _refreshTokenExpirationTimer: any;

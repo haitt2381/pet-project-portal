@@ -7,19 +7,23 @@
     > Create user
     </button>
     <div class="d-flex">
-      <app-date-range-picker (changeDateFilter)="loadUsers()"></app-date-range-picker>
+      <app-date-range-picker></app-date-range-picker>
       <app-search-filter class="ms-2" [paramName]="'keyword'" (keywordChange)="loadUsers()"></app-search-filter>
-      <i class="ms-4 fa-solid fa-filter-circle-xmark fa-lg pt-3 pe-2 text-primary cursor-pointer"
-         matTooltipPosition="above"
-         matTooltip="Remove all filter"
-         (click)="onRemoveAllFilter()"></i>
+      <button class="btn btn-tertiary" [disabled]="this.isRemoveAllFilterDisable"
+              matTooltipPosition="above"
+              matTooltip="Remove all filter"
+      >
+        <i class="ms-4 fa-solid fa-filter-circle-xmark fa-xl text-primary cursor-pointer"
+           (click)="onRemoveAllFilter()"
+        ></i>
+      </button>
 
     </div>
   </div>
   <div class="card-body table-responsive">
     <table class="table align-middle mb-0 bg-white userManagement"
-           aria-label="userManagement" matSort
-           [dataSource]="dataSource" appNgMatTableQueryReflector
+           aria-label="userManagement"
+           matSort [dataSource]="dataSource" appNgMatTableQueryReflector
     >
       <thead class="bg-light">
       <tr>
@@ -28,12 +32,12 @@
         <th class="filter-container">
           Role
           <app-checkbox-filter
-            [dataSource]="dataSourceRoleFilter" [paramName]="'role'" (toggleCheckbox)="loadUsers()"
+            [dataSource]="dataSourceRoleFilter" paramName='role'
           ></app-checkbox-filter>
         </th>
         <th>Status
           <app-radio-box-filter
-            [dataSource]="dataSourceActiveFilter" [paramName]="'active'" (clickRadioBox)="loadUsers()">
+            [dataSource]="dataSourceActiveFilter" paramName='active'>
           </app-radio-box-filter>
         </th>
         <th mat-sort-header="modifiedAt">Modified Date</th>

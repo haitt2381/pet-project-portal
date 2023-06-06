@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder} from "@angular/forms";
-import {getQueryStorage, setQueryStorage} from "../../../services/Utils.service";
+import {QueryStorageService} from "../../../services/query-storage.service";
 
 @Component({
   selector: 'app-date-range-picker',
@@ -8,44 +8,37 @@ import {getQueryStorage, setQueryStorage} from "../../../services/Utils.service"
 })
 export class DateRangePickerComponent implements OnInit {
   @Input() paramName: string;
-  @Output() changeDateFilter = new EventEmitter();
   isDateSelected: boolean;
-  dateRangePickerForm
+  dateRangePickerForm;
   queryStorage: any;
 
   constructor(
     private _fb: FormBuilder,
+    private _queryService: QueryStorageService,
   ) {
   }
 
   ngOnInit() {
-    this.queryStorage = getQueryStorage();
-    let fromDate = this.queryStorage['fromDate'] ? this.queryStorage['fromDate'] : '';
-    let toDate = this.queryStorage['toDate'] ? this.queryStorage['toDate'] : '';
-    this.dateRangePickerForm = this._fb.group({start: fromDate, end: toDate});
-    if (fromDate?.length > 0 || toDate?.length > 0) {
-      this.isDateSelected = true;
-    }
+    this._queryService.item.subscribe(() => {
+      this.queryStorage = this._queryService.getItem;
+      let fromDate = this.queryStorage['fromDate'] ? this.queryStorage['fromDate'] : '';
+      let toDate = this.queryStorage['toDate'] ? this.queryStorage['toDate'] : '';
+      this.dateRangePickerForm = this._fb.group({start: fromDate, end: toDate});
+      this.isDateSelected = fromDate?.length > 0 || toDate?.length > 0;
+    })
   }
 
   onChangeDateFilter() {
-    this.queryStorage = getQueryStorage();
     if (this.dateRangePickerForm.valid) {
       this.queryStorage['fromDate'] = this.dateRangePickerForm.value.start;
       this.queryStorage['toDate'] = this.dateRangePickerForm.value.end;
     }
-    this.isDateSelected = true;
-    setQueryStorage(this.queryStorage);
-    this.changeDateFilter.emit();
+    this._queryService.setItem = this.queryStorage;
   }
 
   onRemoveDateFilter() {
-    this.queryStorage = getQueryStorage();
-    this.dateRangePickerForm.reset();
-    this.isDateSelected = false;
-    this.queryStorage['fromDate'] = null;
-    this.queryStorage['toDate'] = null;
-    setQueryStorage(this.queryStorage);
-    this.changeDateFilter.emit();
+    this.queryStorage['fromDate'] = undefined;
+    this.queryStorage['toDate'] = undefined;
+    this._queryService.setItem = this.queryStorage;
   }
 }
