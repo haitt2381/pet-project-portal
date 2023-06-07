@@ -13,7 +13,6 @@ export class SearchFilterComponent implements OnInit, AfterViewInit {
   @ViewChild('inputSearch') inputSearchRef: ElementRef;
   inputControl;
   queryStorage;
-  isSearchFilterActive = false;
 
   constructor(private _query: QueryStorageService,) {
   }
@@ -42,14 +41,12 @@ export class SearchFilterComponent implements OnInit, AfterViewInit {
 
   onKeywordChange() {
     if (!this.inputControl.value || this.inputControl.value.isEmpty) {
-      // this.isSearchFilterActive = false;
       this.queryStorage[this.paramName] = undefined;
       this._query.setItem = this.queryStorage;
     }
 
     let isSameTextSearchBefore = this.inputControl.value === this.queryStorage[this.paramName];
     if (!isSameTextSearchBefore && (this.inputControl.value && !this.inputControl.value.isEmpty)) {
-      // this.isSearchFilterActive = true;
       this.queryStorage[this.paramName] = this.inputControl.value;
       this._query.setItem = this.queryStorage;
     }
@@ -58,7 +55,6 @@ export class SearchFilterComponent implements OnInit, AfterViewInit {
   onRemoveSearch() {
     this.inputControl.reset();
     this.queryStorage[this.paramName] = undefined;
-    // this.isSearchFilterActive = false;
     this._query.setItem = this.queryStorage;
   }
 }
